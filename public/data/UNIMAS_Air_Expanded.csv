@@ -1,0 +1,280 @@
+Date,Location,AQI,PM2.5,CO2,Temp,Humidity,Status
+2026-01-01,Engineering Faculty,88,20,863,25.3,89,Moderate
+2026-01-02,Engineering Faculty,88,50,802,30.7,88,Moderate
+2026-01-03,Engineering Faculty,49,46,598,26.4,70,Good
+2026-01-04,Engineering Faculty,69,53,737,31.7,80,Moderate
+2026-01-05,Engineering Faculty,86,39,833,32.4,79,Moderate
+2026-01-06,Engineering Faculty,36,30,745,32.9,89,Good
+2026-01-07,Engineering Faculty,89,16,784,25.7,81,Moderate
+2026-01-08,Engineering Faculty,98,51,559,30.1,78,Moderate
+2026-01-09,Engineering Faculty,48,30,530,31.9,91,Good
+2026-01-10,Engineering Faculty,62,38,515,25.7,77,Moderate
+2026-01-11,Engineering Faculty,65,52,503,29.9,72,Moderate
+2026-01-12,Engineering Faculty,118,49,552,25.0,83,Unhealthy Sensitive
+2026-01-13,Engineering Faculty,111,16,709,28.6,78,Unhealthy Sensitive
+2026-01-14,Engineering Faculty,62,18,688,29.0,85,Moderate
+2026-01-15,Engineering Faculty,49,22,534,30.8,70,Good
+2026-01-16,Engineering Faculty,77,26,842,27.9,92,Moderate
+2026-01-17,Engineering Faculty,51,44,437,32.8,88,Moderate
+2026-01-18,Engineering Faculty,83,22,682,28.5,90,Moderate
+2026-01-19,Engineering Faculty,59,47,683,30.4,70,Moderate
+2026-01-20,Engineering Faculty,98,33,403,25.2,86,Moderate
+2026-01-21,Engineering Faculty,46,58,619,28.8,83,Good
+2026-01-22,Engineering Faculty,35,49,779,25.1,93,Good
+2026-01-23,Engineering Faculty,75,45,498,32.8,89,Moderate
+2026-01-24,Engineering Faculty,92,35,815,31.8,72,Moderate
+2026-01-25,Engineering Faculty,47,39,889,32.5,72,Good
+2026-01-26,Engineering Faculty,75,38,513,29.9,91,Moderate
+2026-01-27,Engineering Faculty,52,16,526,29.1,71,Moderate
+2026-01-28,Engineering Faculty,119,31,503,30.6,80,Unhealthy Sensitive
+2026-01-29,Engineering Faculty,77,53,876,27.4,72,Moderate
+2026-01-30,Engineering Faculty,79,39,807,32.3,76,Moderate
+2026-01-31,Engineering Faculty,86,50,572,26.6,77,Moderate
+2026-01-01,Admin Block,45,28,859,32.1,84,Good
+2026-01-02,Admin Block,95,46,614,30.4,88,Moderate
+2026-01-03,Admin Block,54,36,713,31.9,86,Moderate
+2026-01-04,Admin Block,81,56,725,27.4,80,Moderate
+2026-01-05,Admin Block,89,51,880,31.6,81,Moderate
+2026-01-06,Admin Block,34,53,595,31.7,89,Good
+2026-01-07,Admin Block,76,49,710,26.1,85,Moderate
+2026-01-08,Admin Block,42,56,557,25.3,93,Good
+2026-01-09,Admin Block,92,33,491,31.0,74,Moderate
+2026-01-10,Admin Block,119,37,526,30.6,90,Unhealthy Sensitive
+2026-01-11,Admin Block,30,15,638,27.0,91,Good
+2026-01-12,Admin Block,77,39,887,32.5,70,Moderate
+2026-01-13,Admin Block,45,53,591,29.4,91,Good
+2026-01-14,Admin Block,96,26,553,27.8,74,Moderate
+2026-01-15,Admin Block,115,43,861,25.7,84,Unhealthy Sensitive
+2026-01-16,Admin Block,91,19,603,25.1,85,Moderate
+2026-01-17,Admin Block,114,53,499,26.4,74,Unhealthy Sensitive
+2026-01-18,Admin Block,52,24,645,30.1,71,Moderate
+2026-01-19,Admin Block,81,45,793,30.0,70,Moderate
+2026-01-20,Admin Block,98,59,403,29.9,85,Moderate
+2026-01-21,Admin Block,31,42,783,30.1,89,Good
+2026-01-22,Admin Block,53,26,577,29.6,70,Moderate
+2026-01-23,Admin Block,62,57,500,30.0,70,Moderate
+2026-01-24,Admin Block,62,54,729,26.7,82,Moderate
+2026-01-25,Admin Block,41,45,701,25.1,88,Good
+2026-01-26,Admin Block,64,37,736,30.2,79,Moderate
+2026-01-27,Admin Block,119,48,514,27.3,73,Unhealthy Sensitive
+2026-01-28,Admin Block,87,59,474,32.0,73,Moderate
+2026-01-29,Admin Block,118,35,648,29.4,74,Unhealthy Sensitive
+2026-01-30,Admin Block,102,38,591,29.6,72,Unhealthy Sensitive
+2026-01-31,Admin Block,65,32,896,31.2,93,Moderate
+2026-01-01,Main Gate,52,46,436,26.9,92,Moderate
+2026-01-02,Main Gate,42,37,616,26.9,86,Good
+2026-01-03,Main Gate,91,34,767,28.1,82,Moderate
+2026-01-04,Main Gate,88,33,576,25.4,78,Moderate
+2026-01-05,Main Gate,48,26,664,27.6,83,Good
+2026-01-06,Main Gate,81,33,766,25.7,74,Moderate
+2026-01-07,Main Gate,41,39,835,30.4,73,Good
+2026-01-08,Main Gate,82,37,543,31.3,82,Moderate
+2026-01-09,Main Gate,82,56,585,25.5,74,Moderate
+2026-01-10,Main Gate,64,37,620,27.8,87,Moderate
+2026-01-11,Main Gate,105,23,473,31.7,86,Unhealthy Sensitive
+2026-01-12,Main Gate,36,27,567,25.6,87,Good
+2026-01-13,Main Gate,56,16,404,29.1,75,Moderate
+2026-01-14,Main Gate,112,22,895,31.9,91,Unhealthy Sensitive
+2026-01-15,Main Gate,46,21,616,29.7,73,Good
+2026-01-16,Main Gate,99,45,674,31.2,91,Moderate
+2026-01-17,Main Gate,68,41,601,32.3,76,Moderate
+2026-01-18,Main Gate,96,59,540,28.2,89,Moderate
+2026-01-19,Main Gate,101,55,822,31.0,82,Unhealthy Sensitive
+2026-01-20,Main Gate,91,39,711,29.2,90,Moderate
+2026-01-21,Main Gate,35,58,572,32.8,84,Good
+2026-01-22,Main Gate,50,30,773,32.4,74,Good
+2026-01-23,Main Gate,65,49,546,32.8,87,Moderate
+2026-01-24,Main Gate,76,55,704,30.6,70,Moderate
+2026-01-25,Main Gate,83,17,543,30.9,80,Moderate
+2026-01-26,Main Gate,41,24,623,25.5,75,Good
+2026-01-27,Main Gate,105,38,555,27.7,73,Unhealthy Sensitive
+2026-01-28,Main Gate,119,22,585,26.8,74,Unhealthy Sensitive
+2026-01-29,Main Gate,70,50,591,28.6,86,Moderate
+2026-01-30,Main Gate,102,47,611,29.8,85,Unhealthy Sensitive
+2026-01-31,Main Gate,58,27,445,25.6,75,Moderate
+2026-02-01,Engineering Faculty,94,22,933,25.05,90,Moderate
+2026-02-02,Engineering Faculty,90,52,807,34.05,102,Moderate
+2026-02-03,Engineering Faculty,52,45,635,27.38,67,Moderate
+2026-02-04,Engineering Faculty,81,64,740,33.19,73,Moderate
+2026-02-05,Engineering Faculty,95,41,844,35.33,85,Moderate
+2026-02-06,Engineering Faculty,37,32,719,32.33,91,Good
+2026-02-07,Engineering Faculty,100,17,780,27.57,80,Moderate
+2026-02-08,Engineering Faculty,101,54,542,31.91,85,Unhealthy Sensitive
+2026-02-09,Engineering Faculty,45,31,525,34.44,97,Good
+2026-02-10,Engineering Faculty,61,39,573,27.43,78,Moderate
+2026-02-11,Engineering Faculty,61,53,499,35.8,70,Moderate
+2026-02-12,Engineering Faculty,121,51,667,25.29,91,Unhealthy Sensitive
+2026-02-13,Engineering Faculty,117,16,765,29.12,85,Unhealthy Sensitive
+2026-02-14,Engineering Faculty,71,18,730,29.37,89,Moderate
+2026-02-15,Engineering Faculty,52,23,533,31.31,81,Moderate
+2026-02-16,Engineering Faculty,80,27,919,28.23,91,Moderate
+2026-02-17,Engineering Faculty,56,50,444,36.78,84,Moderate
+2026-02-18,Engineering Faculty,76,20,721,32.35,91,Moderate
+2026-02-19,Engineering Faculty,63,52,822,30.88,73,Moderate
+2026-02-20,Engineering Faculty,107,37,421,25.2,92,Unhealthy Sensitive
+2026-02-21,Engineering Faculty,44,54,693,31.05,86,Good
+2026-02-22,Engineering Faculty,39,50,785,25.52,100,Good
+2026-02-23,Engineering Faculty,80,46,522,35.69,87,Moderate
+2026-02-24,Engineering Faculty,94,34,942,33.78,82,Moderate
+2026-02-25,Engineering Faculty,51,39,900,31.17,75,Moderate
+2026-02-26,Engineering Faculty,89,37,594,34.17,102,Moderate
+2026-02-27,Engineering Faculty,55,18,575,33.69,76,Moderate
+2026-02-28,Engineering Faculty,127,34,511,31.0,86,Unhealthy Sensitive
+2026-02-28,Engineering Faculty,79,60,953,28.13,78,Moderate
+2026-02-28,Engineering Faculty,79,43,894,34.47,82,Moderate
+2026-02-28,Engineering Faculty,95,49,622,28.46,84,Moderate
+2026-02-01,Admin Block,45,29,821,34.97,95,Good
+2026-02-02,Admin Block,100,50,618,35.59,93,Moderate
+2026-02-03,Admin Block,55,35,738,33.16,94,Moderate
+2026-02-04,Admin Block,87,61,758,27.46,84,Moderate
+2026-02-05,Admin Block,95,53,957,30.56,92,Moderate
+2026-02-06,Admin Block,38,54,631,31.89,90,Good
+2026-02-07,Admin Block,77,54,689,27.35,98,Moderate
+2026-02-08,Admin Block,43,60,598,29.29,97,Good
+2026-02-09,Admin Block,91,34,534,31.59,71,Moderate
+2026-02-10,Admin Block,122,41,570,32.54,95,Unhealthy Sensitive
+2026-02-11,Admin Block,32,15,711,28.32,92,Good
+2026-02-12,Admin Block,84,42,976,36.44,77,Moderate
+2026-02-13,Admin Block,45,58,637,35.33,92,Good
+2026-02-14,Admin Block,106,27,578,28.3,76,Unhealthy Sensitive
+2026-02-15,Admin Block,130,46,818,26.23,79,Unhealthy Sensitive
+2026-02-16,Admin Block,98,19,649,27.93,87,Moderate
+2026-02-17,Admin Block,133,59,530,28.8,67,Unhealthy Sensitive
+2026-02-18,Admin Block,52,25,688,34.94,68,Moderate
+2026-02-19,Admin Block,79,46,772,32.55,77,Moderate
+2026-02-20,Admin Block,92,66,397,30.75,93,Moderate
+2026-02-21,Admin Block,35,42,872,32.67,96,Good
+2026-02-22,Admin Block,58,25,604,33.05,69,Moderate
+2026-02-23,Admin Block,65,55,545,32.98,73,Moderate
+2026-02-24,Admin Block,66,59,767,28.85,86,Moderate
+2026-02-25,Admin Block,40,44,737,27.96,86,Good
+2026-02-26,Admin Block,77,43,814,33.83,90,Moderate
+2026-02-27,Admin Block,126,44,524,30.93,80,Unhealthy Sensitive
+2026-02-28,Admin Block,92,68,500,34.85,76,Moderate
+2026-02-28,Admin Block,129,37,662,30.58,78,Unhealthy Sensitive
+2026-02-28,Admin Block,110,40,605,31.34,77,Unhealthy Sensitive
+2026-02-28,Admin Block,69,33,924,35.02,86,Moderate
+2026-02-01,Main Gate,52,49,464,26.93,95,Moderate
+2026-02-02,Main Gate,45,39,629,28.84,87,Good
+2026-02-03,Main Gate,106,38,863,28.84,81,Unhealthy Sensitive
+2026-02-04,Main Gate,100,35,574,26.71,81,Moderate
+2026-02-05,Main Gate,55,28,690,31.1,96,Moderate
+2026-02-06,Main Gate,83,34,784,27.28,81,Moderate
+2026-02-07,Main Gate,41,41,949,32.0,74,Good
+2026-02-08,Main Gate,85,40,577,30.31,89,Moderate
+2026-02-09,Main Gate,86,53,650,27.92,84,Moderate
+2026-02-10,Main Gate,71,36,596,30.27,96,Moderate
+2026-02-11,Main Gate,100,25,504,37.4,91,Moderate
+2026-02-12,Main Gate,41,29,626,26.41,88,Good
+2026-02-13,Main Gate,58,17,426,30.94,82,Moderate
+2026-02-14,Main Gate,115,23,997,33.97,98,Unhealthy Sensitive
+2026-02-15,Main Gate,46,22,628,34.0,81,Good
+2026-02-16,Main Gate,94,46,765,32.58,99,Moderate
+2026-02-17,Main Gate,75,41,714,34.46,85,Moderate
+2026-02-18,Main Gate,101,63,555,30.64,91,Unhealthy Sensitive
+2026-02-19,Main Gate,98,55,841,32.9,93,Moderate
+2026-02-20,Main Gate,88,42,809,29.88,96,Moderate
+2026-02-21,Main Gate,36,55,655,34.82,99,Good
+2026-02-22,Main Gate,58,33,787,36.11,75,Moderate
+2026-02-23,Main Gate,67,53,560,32.42,100,Moderate
+2026-02-24,Main Gate,73,59,727,32.37,74,Moderate
+2026-02-25,Main Gate,86,19,526,31.15,81,Moderate
+2026-02-26,Main Gate,42,28,620,28.6,77,Good
+2026-02-27,Main Gate,93,42,549,26.55,75,Moderate
+2026-02-28,Main Gate,125,21,587,27.24,80,Unhealthy Sensitive
+2026-02-28,Main Gate,73,49,619,30.68,93,Moderate
+2026-02-28,Main Gate,111,48,650,34.09,86,Unhealthy Sensitive
+2026-02-28,Main Gate,67,28,509,26.78,79,Moderate
+2026-03-01,Engineering Faculty,108,25,1040,27.56,99,Unhealthy Sensitive
+2026-03-02,Engineering Faculty,106,55,822,32.38,90,Unhealthy Sensitive
+2026-03-03,Engineering Faculty,55,51,633,29.89,73,Moderate
+2026-03-04,Engineering Faculty,76,62,779,33.16,94,Moderate
+2026-03-05,Engineering Faculty,95,45,961,35.69,84,Moderate
+2026-03-06,Engineering Faculty,41,35,806,36.17,92,Good
+2026-03-07,Engineering Faculty,92,18,921,29.94,92,Moderate
+2026-03-08,Engineering Faculty,106,53,592,33.97,91,Unhealthy Sensitive
+2026-03-09,Engineering Faculty,48,36,592,35.04,104,Good
+2026-03-10,Engineering Faculty,70,39,541,29.53,89,Moderate
+2026-03-11,Engineering Faculty,74,58,618,35.38,76,Moderate
+2026-03-12,Engineering Faculty,126,52,568,28.34,84,Unhealthy Sensitive
+2026-03-13,Engineering Faculty,133,18,793,31.48,93,Unhealthy Sensitive
+2026-03-14,Engineering Faculty,64,20,783,29.62,92,Moderate
+2026-03-15,Engineering Faculty,50,25,601,31.91,76,Good
+2026-03-16,Engineering Faculty,86,29,917,30.18,109,Moderate
+2026-03-17,Engineering Faculty,59,53,477,34.88,100,Moderate
+2026-03-18,Engineering Faculty,100,25,752,31.03,101,Moderate
+2026-03-19,Engineering Faculty,63,51,745,33.54,86,Moderate
+2026-03-20,Engineering Faculty,114,38,467,28.52,91,Unhealthy Sensitive
+2026-03-21,Engineering Faculty,50,68,763,31.56,96,Good
+2026-03-22,Engineering Faculty,38,50,831,28.34,103,Good
+2026-03-23,Engineering Faculty,86,51,507,36.21,99,Moderate
+2026-03-24,Engineering Faculty,105,40,892,31.21,86,Unhealthy Sensitive
+2026-03-25,Engineering Faculty,47,42,1116,33.92,81,Good
+2026-03-26,Engineering Faculty,89,45,540,32.63,103,Moderate
+2026-03-27,Engineering Faculty,62,17,630,29.9,83,Moderate
+2026-03-28,Engineering Faculty,126,34,604,34.76,86,Unhealthy Sensitive
+2026-03-29,Engineering Faculty,87,58,935,32.66,76,Moderate
+2026-03-30,Engineering Faculty,89,43,915,37.89,79,Moderate
+2026-03-31,Engineering Faculty,96,52,685,28.92,76,Moderate
+2026-03-01,Admin Block,48,28,925,38.18,103,Good
+2026-03-02,Admin Block,101,55,668,33.71,91,Unhealthy Sensitive
+2026-03-03,Admin Block,59,38,759,34.44,93,Moderate
+2026-03-04,Admin Block,95,58,753,29.13,87,Moderate
+2026-03-05,Admin Block,101,50,934,34.19,91,Unhealthy Sensitive
+2026-03-06,Admin Block,37,56,611,34.13,102,Good
+2026-03-07,Admin Block,87,50,782,28.98,98,Moderate
+2026-03-08,Admin Block,39,67,587,28.07,99,Good
+2026-03-09,Admin Block,108,38,547,34.11,81,Unhealthy Sensitive
+2026-03-10,Admin Block,118,39,529,34.46,101,Unhealthy Sensitive
+2026-03-11,Admin Block,32,19,714,31.63,99,Good
+2026-03-12,Admin Block,80,45,1020,37.6,84,Moderate
+2026-03-13,Admin Block,46,57,579,29.72,103,Good
+2026-03-14,Admin Block,112,25,621,26.32,85,Unhealthy Sensitive
+2026-03-15,Admin Block,123,53,1011,29.71,96,Unhealthy Sensitive
+2026-03-16,Admin Block,102,19,620,25.55,99,Unhealthy Sensitive
+2026-03-17,Admin Block,125,53,599,28.68,82,Unhealthy Sensitive
+2026-03-18,Admin Block,59,28,726,31.0,73,Moderate
+2026-03-19,Admin Block,89,56,839,29.76,79,Moderate
+2026-03-20,Admin Block,100,70,442,33.86,90,Moderate
+2026-03-21,Admin Block,36,48,888,34.48,95,Good
+2026-03-22,Admin Block,57,30,637,31.54,79,Moderate
+2026-03-23,Admin Block,62,66,566,28.34,82,Moderate
+2026-03-24,Admin Block,67,62,762,28.49,90,Moderate
+2026-03-25,Admin Block,49,50,778,28.2,98,Good
+2026-03-26,Admin Block,74,41,747,30.54,95,Moderate
+2026-03-27,Admin Block,128,53,562,30.33,81,Unhealthy Sensitive
+2026-03-28,Admin Block,94,62,496,35.17,92,Moderate
+2026-03-29,Admin Block,128,38,684,33.36,84,Unhealthy Sensitive
+2026-03-30,Admin Block,125,38,694,32.77,72,Unhealthy Sensitive
+2026-03-31,Admin Block,73,35,1044,32.5,107,Moderate
+2026-03-01,Main Gate,59,48,496,31.52,103,Moderate
+2026-03-02,Main Gate,49,38,637,29.33,101,Good
+2026-03-03,Main Gate,101,38,829,30.86,94,Unhealthy Sensitive
+2026-03-04,Main Gate,95,39,676,26.52,85,Moderate
+2026-03-05,Main Gate,52,30,736,29.63,85,Moderate
+2026-03-06,Main Gate,89,33,949,26.91,80,Moderate
+2026-03-07,Main Gate,45,41,938,33.12,77,Good
+2026-03-08,Main Gate,94,43,604,37.64,87,Moderate
+2026-03-09,Main Gate,90,58,633,25.95,84,Moderate
+2026-03-10,Main Gate,73,40,687,27.89,104,Moderate
+2026-03-11,Main Gate,115,26,516,37.67,97,Unhealthy Sensitive
+2026-03-12,Main Gate,40,28,648,27.84,89,Good
+2026-03-13,Main Gate,55,18,468,30.84,85,Moderate
+2026-03-14,Main Gate,129,22,942,37.08,107,Unhealthy Sensitive
+2026-03-15,Main Gate,52,22,628,31.59,78,Moderate
+2026-03-16,Main Gate,115,50,667,37.74,99,Unhealthy Sensitive
+2026-03-17,Main Gate,63,41,679,36.84,84,Moderate
+2026-03-18,Main Gate,118,66,558,30.19,94,Unhealthy Sensitive
+2026-03-19,Main Gate,110,60,798,38.11,93,Unhealthy Sensitive
+2026-03-20,Main Gate,106,44,799,31.06,98,Unhealthy Sensitive
+2026-03-21,Main Gate,36,65,715,37.54,95,Good
+2026-03-22,Main Gate,57,35,850,36.22,77,Moderate
+2026-03-23,Main Gate,67,54,628,38.64,93,Moderate
+2026-03-24,Main Gate,81,59,778,36.53,80,Moderate
+2026-03-25,Main Gate,101,19,594,34.05,86,Unhealthy Sensitive
+2026-03-26,Main Gate,45,27,720,26.9,90,Good
+2026-03-27,Main Gate,117,42,601,31.23,79,Unhealthy Sensitive
+2026-03-28,Main Gate,137,24,653,28.39,82,Unhealthy Sensitive
+2026-03-29,Main Gate,79,53,662,34.91,99,Moderate
+2026-03-30,Main Gate,113,50,648,33.02,86,Unhealthy Sensitive
+2026-03-31,Main Gate,65,27,516,27.6,75,Moderate

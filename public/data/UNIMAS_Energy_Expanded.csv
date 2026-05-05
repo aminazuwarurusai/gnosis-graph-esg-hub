@@ -1,0 +1,280 @@
+Date,Building,Power_kW,Voltage,Current,Energy_kWh,Status
+2026-01-01,Admin Block,131,415,212,1310,Normal
+2026-01-02,Admin Block,94,415,226,940,Normal
+2026-01-03,Admin Block,151,415,140,1510,High
+2026-01-04,Admin Block,162,415,194,1620,High
+2026-01-05,Admin Block,154,415,207,1540,High
+2026-01-06,Admin Block,179,415,223,1790,High
+2026-01-07,Admin Block,103,415,172,1030,Normal
+2026-01-08,Admin Block,81,415,207,810,Normal
+2026-01-09,Admin Block,109,415,157,1090,Normal
+2026-01-10,Admin Block,81,415,140,810,Normal
+2026-01-11,Admin Block,112,415,177,1120,Normal
+2026-01-12,Admin Block,101,415,208,1010,Normal
+2026-01-13,Admin Block,128,415,178,1280,Normal
+2026-01-14,Admin Block,121,415,134,1210,Normal
+2026-01-15,Admin Block,141,415,170,1410,Normal
+2026-01-16,Admin Block,134,415,183,1340,Normal
+2026-01-17,Admin Block,82,415,170,820,Normal
+2026-01-18,Admin Block,86,415,140,860,Normal
+2026-01-19,Admin Block,152,415,137,1520,High
+2026-01-20,Admin Block,83,415,208,830,Normal
+2026-01-21,Admin Block,139,415,133,1390,Normal
+2026-01-22,Admin Block,88,415,209,880,Normal
+2026-01-23,Admin Block,132,415,249,1320,Normal
+2026-01-24,Admin Block,163,415,211,1630,High
+2026-01-25,Admin Block,139,415,127,1390,Normal
+2026-01-26,Admin Block,126,415,154,1260,Normal
+2026-01-27,Admin Block,157,415,200,1570,High
+2026-01-28,Admin Block,115,415,169,1150,Normal
+2026-01-29,Admin Block,83,415,121,830,Normal
+2026-01-30,Admin Block,85,415,173,850,Normal
+2026-01-31,Admin Block,83,415,173,830,Normal
+2026-01-01,Engineering Faculty,172,415,163,1720,High
+2026-01-02,Engineering Faculty,113,415,133,1130,Normal
+2026-01-03,Engineering Faculty,174,415,167,1740,High
+2026-01-04,Engineering Faculty,94,415,159,940,Normal
+2026-01-05,Engineering Faculty,164,415,201,1640,High
+2026-01-06,Engineering Faculty,132,415,143,1320,Normal
+2026-01-07,Engineering Faculty,105,415,243,1050,Normal
+2026-01-08,Engineering Faculty,120,415,134,1200,Normal
+2026-01-09,Engineering Faculty,124,415,184,1240,Normal
+2026-01-10,Engineering Faculty,168,415,190,1680,High
+2026-01-11,Engineering Faculty,88,415,207,880,Normal
+2026-01-12,Engineering Faculty,80,415,182,800,Normal
+2026-01-13,Engineering Faculty,90,415,200,900,Normal
+2026-01-14,Engineering Faculty,87,415,152,870,Normal
+2026-01-15,Engineering Faculty,84,415,160,840,Normal
+2026-01-16,Engineering Faculty,107,415,191,1070,Normal
+2026-01-17,Engineering Faculty,91,415,152,910,Normal
+2026-01-18,Engineering Faculty,127,415,181,1270,Normal
+2026-01-19,Engineering Faculty,167,415,156,1670,High
+2026-01-20,Engineering Faculty,178,415,223,1780,High
+2026-01-21,Engineering Faculty,165,415,154,1650,High
+2026-01-22,Engineering Faculty,144,415,220,1440,Normal
+2026-01-23,Engineering Faculty,126,415,120,1260,Normal
+2026-01-24,Engineering Faculty,84,415,222,840,Normal
+2026-01-25,Engineering Faculty,106,415,134,1060,Normal
+2026-01-26,Engineering Faculty,169,415,161,1690,High
+2026-01-27,Engineering Faculty,156,415,182,1560,High
+2026-01-28,Engineering Faculty,175,415,171,1750,High
+2026-01-29,Engineering Faculty,175,415,148,1750,High
+2026-01-30,Engineering Faculty,115,415,132,1150,Normal
+2026-01-31,Engineering Faculty,111,415,190,1110,Normal
+2026-01-01,Colleges,138,415,205,1380,Normal
+2026-01-02,Colleges,107,415,185,1070,Normal
+2026-01-03,Colleges,121,415,164,1210,Normal
+2026-01-04,Colleges,141,415,147,1410,Normal
+2026-01-05,Colleges,107,415,227,1070,Normal
+2026-01-06,Colleges,123,415,203,1230,Normal
+2026-01-07,Colleges,109,415,194,1090,Normal
+2026-01-08,Colleges,171,415,248,1710,High
+2026-01-09,Colleges,106,415,240,1060,Normal
+2026-01-10,Colleges,156,415,122,1560,High
+2026-01-11,Colleges,149,415,181,1490,High
+2026-01-12,Colleges,116,415,170,1160,Normal
+2026-01-13,Colleges,123,415,178,1230,Normal
+2026-01-14,Colleges,111,415,215,1110,Normal
+2026-01-15,Colleges,167,415,232,1670,High
+2026-01-16,Colleges,141,415,171,1410,Normal
+2026-01-17,Colleges,91,415,158,910,Normal
+2026-01-18,Colleges,81,415,232,810,Normal
+2026-01-19,Colleges,135,415,200,1350,Normal
+2026-01-20,Colleges,138,415,232,1380,Normal
+2026-01-21,Colleges,81,415,249,810,Normal
+2026-01-22,Colleges,171,415,173,1710,High
+2026-01-23,Colleges,166,415,248,1660,High
+2026-01-24,Colleges,98,415,245,980,Normal
+2026-01-25,Colleges,81,415,172,810,Normal
+2026-01-26,Colleges,123,415,187,1230,Normal
+2026-01-27,Colleges,134,415,242,1340,Normal
+2026-01-28,Colleges,96,415,157,960,Normal
+2026-01-29,Colleges,103,415,188,1030,Normal
+2026-01-30,Colleges,177,415,216,1770,High
+2026-01-31,Colleges,152,415,243,1520,High
+2026-02-01,Admin Block,141,415,218,1413,Normal
+2026-02-02,Admin Block,98,415,232,983,Normal
+2026-02-03,Admin Block,164,415,135,1509,High
+2026-02-04,Admin Block,185,415,207,1554,High
+2026-02-05,Admin Block,160,415,221,1576,High
+2026-02-06,Admin Block,185,415,234,1971,High
+2026-02-07,Admin Block,118,415,178,1095,Normal
+2026-02-08,Admin Block,89,415,200,790,Normal
+2026-02-09,Admin Block,111,415,161,1156,Normal
+2026-02-10,Admin Block,88,415,144,869,Normal
+2026-02-11,Admin Block,114,415,177,1117,Normal
+2026-02-12,Admin Block,103,415,216,1070,Normal
+2026-02-13,Admin Block,136,415,191,1348,Normal
+2026-02-14,Admin Block,113,415,156,1188,Normal
+2026-02-15,Admin Block,133,415,180,1511,High
+2026-02-16,Admin Block,136,415,195,1452,High
+2026-02-17,Admin Block,81,415,178,914,Normal
+2026-02-18,Admin Block,92,415,131,957,Normal
+2026-02-19,Admin Block,151,415,144,1470,High
+2026-02-20,Admin Block,80,415,219,825,Normal
+2026-02-21,Admin Block,158,415,159,1502,High
+2026-02-22,Admin Block,91,415,217,951,Normal
+2026-02-23,Admin Block,139,415,266,1427,Normal
+2026-02-24,Admin Block,157,415,221,2088,High
+2026-02-25,Admin Block,141,415,124,1507,High
+2026-02-26,Admin Block,133,415,172,1409,Normal
+2026-02-27,Admin Block,154,415,219,1738,High
+2026-02-28,Admin Block,123,415,185,1252,Normal
+2026-02-28,Admin Block,84,415,120,856,Normal
+2026-02-28,Admin Block,88,415,196,931,Normal
+2026-02-28,Admin Block,84,415,167,833,Normal
+2026-02-01,Engineering Faculty,200,415,177,1782,High
+2026-02-02,Engineering Faculty,119,415,157,1154,Normal
+2026-02-03,Engineering Faculty,172,415,165,1836,High
+2026-02-04,Engineering Faculty,103,415,162,1118,Normal
+2026-02-05,Engineering Faculty,160,415,212,1538,High
+2026-02-06,Engineering Faculty,140,415,146,1440,Normal
+2026-02-07,Engineering Faculty,98,415,233,1001,Normal
+2026-02-08,Engineering Faculty,116,415,141,1226,Normal
+2026-02-09,Engineering Faculty,132,415,181,1383,Normal
+2026-02-10,Engineering Faculty,184,415,205,1770,High
+2026-02-11,Engineering Faculty,93,415,206,867,Normal
+2026-02-12,Engineering Faculty,83,415,208,806,Normal
+2026-02-13,Engineering Faculty,93,415,201,982,Normal
+2026-02-14,Engineering Faculty,84,415,157,875,Normal
+2026-02-15,Engineering Faculty,85,415,176,893,Normal
+2026-02-16,Engineering Faculty,109,415,186,1126,Normal
+2026-02-17,Engineering Faculty,101,415,162,920,Normal
+2026-02-18,Engineering Faculty,136,415,204,1497,High
+2026-02-19,Engineering Faculty,158,415,149,1817,High
+2026-02-20,Engineering Faculty,190,415,237,1653,High
+2026-02-21,Engineering Faculty,169,415,164,1751,High
+2026-02-22,Engineering Faculty,145,415,241,1455,High
+2026-02-23,Engineering Faculty,137,415,117,1387,Normal
+2026-02-24,Engineering Faculty,93,415,216,842,Normal
+2026-02-25,Engineering Faculty,117,415,145,1106,Normal
+2026-02-26,Engineering Faculty,169,415,172,1826,High
+2026-02-27,Engineering Faculty,161,415,194,1719,High
+2026-02-28,Engineering Faculty,187,415,183,1711,High
+2026-02-28,Engineering Faculty,194,415,149,1802,High
+2026-02-28,Engineering Faculty,117,415,140,1175,Normal
+2026-02-28,Engineering Faculty,115,415,203,1122,Normal
+2026-02-01,Colleges,136,415,206,1595,High
+2026-02-02,Colleges,105,415,215,1149,Normal
+2026-02-03,Colleges,133,415,177,1179,Normal
+2026-02-04,Colleges,160,415,144,1558,High
+2026-02-05,Colleges,112,415,247,1260,Normal
+2026-02-06,Colleges,137,415,201,1368,Normal
+2026-02-07,Colleges,117,415,213,1045,Normal
+2026-02-08,Colleges,173,415,278,1746,High
+2026-02-09,Colleges,114,415,240,1194,Normal
+2026-02-10,Colleges,178,415,135,1572,High
+2026-02-11,Colleges,156,415,195,1604,High
+2026-02-12,Colleges,133,415,187,1272,Normal
+2026-02-13,Colleges,110,415,207,1223,Normal
+2026-02-14,Colleges,122,415,223,1162,Normal
+2026-02-15,Colleges,176,415,233,1429,Normal
+2026-02-16,Colleges,146,415,170,1394,Normal
+2026-02-17,Colleges,96,415,158,942,Normal
+2026-02-18,Colleges,75,415,243,790,Normal
+2026-02-19,Colleges,140,415,214,1550,High
+2026-02-20,Colleges,148,415,247,1331,Normal
+2026-02-21,Colleges,92,415,274,829,Normal
+2026-02-22,Colleges,174,415,182,1809,High
+2026-02-23,Colleges,166,415,282,1887,High
+2026-02-24,Colleges,100,415,253,945,Normal
+2026-02-25,Colleges,89,415,209,907,Normal
+2026-02-26,Colleges,132,415,203,1292,Normal
+2026-02-27,Colleges,136,415,242,1328,Normal
+2026-02-28,Colleges,104,415,155,1035,Normal
+2026-02-28,Colleges,109,415,203,1094,Normal
+2026-02-28,Colleges,196,415,224,1795,High
+2026-02-28,Colleges,153,415,266,1602,High
+2026-03-01,Admin Block,141,415,252,1424,Normal
+2026-03-02,Admin Block,104,415,262,1069,Normal
+2026-03-03,Admin Block,172,415,172,1730,High
+2026-03-04,Admin Block,194,415,204,1730,High
+2026-03-05,Admin Block,158,415,239,1641,High
+2026-03-06,Admin Block,220,415,248,1939,High
+2026-03-07,Admin Block,101,415,212,991,Normal
+2026-03-08,Admin Block,88,415,218,817,Normal
+2026-03-09,Admin Block,124,415,165,1288,Normal
+2026-03-10,Admin Block,90,415,149,971,Normal
+2026-03-11,Admin Block,119,415,172,1215,Normal
+2026-03-12,Admin Block,110,415,222,1146,Normal
+2026-03-13,Admin Block,137,415,188,1432,Normal
+2026-03-14,Admin Block,129,415,149,1555,High
+2026-03-15,Admin Block,162,415,190,1646,High
+2026-03-16,Admin Block,150,415,222,1464,High
+2026-03-17,Admin Block,87,415,197,855,Normal
+2026-03-18,Admin Block,99,415,149,863,Normal
+2026-03-19,Admin Block,170,415,143,1691,High
+2026-03-20,Admin Block,95,415,235,875,Normal
+2026-03-21,Admin Block,158,415,136,1410,Normal
+2026-03-22,Admin Block,92,415,253,934,Normal
+2026-03-23,Admin Block,141,415,292,1366,Normal
+2026-03-24,Admin Block,187,415,226,1958,High
+2026-03-25,Admin Block,158,415,127,1603,High
+2026-03-26,Admin Block,138,415,182,1385,Normal
+2026-03-27,Admin Block,174,415,219,1866,High
+2026-03-28,Admin Block,135,415,198,1270,Normal
+2026-03-29,Admin Block,88,415,122,870,Normal
+2026-03-30,Admin Block,96,415,184,1013,Normal
+2026-03-31,Admin Block,90,415,190,940,Normal
+2026-03-01,Engineering Faculty,187,415,180,1785,High
+2026-03-02,Engineering Faculty,132,415,143,1230,Normal
+2026-03-03,Engineering Faculty,200,415,190,1823,High
+2026-03-04,Engineering Faculty,108,415,165,956,Normal
+2026-03-05,Engineering Faculty,193,415,219,1895,High
+2026-03-06,Engineering Faculty,145,415,158,1603,High
+2026-03-07,Engineering Faculty,120,415,275,1067,Normal
+2026-03-08,Engineering Faculty,130,415,153,1361,Normal
+2026-03-09,Engineering Faculty,139,415,190,1316,Normal
+2026-03-10,Engineering Faculty,183,415,192,1799,High
+2026-03-11,Engineering Faculty,97,415,244,937,Normal
+2026-03-12,Engineering Faculty,91,415,204,839,Normal
+2026-03-13,Engineering Faculty,95,415,211,993,Normal
+2026-03-14,Engineering Faculty,107,415,181,914,Normal
+2026-03-15,Engineering Faculty,87,415,177,938,Normal
+2026-03-16,Engineering Faculty,110,415,224,1174,Normal
+2026-03-17,Engineering Faculty,106,415,168,988,Normal
+2026-03-18,Engineering Faculty,146,415,221,1328,Normal
+2026-03-19,Engineering Faculty,190,415,188,1779,High
+2026-03-20,Engineering Faculty,203,415,242,2039,High
+2026-03-21,Engineering Faculty,181,415,178,1865,High
+2026-03-22,Engineering Faculty,151,415,251,1500,High
+2026-03-23,Engineering Faculty,139,415,142,1394,Normal
+2026-03-24,Engineering Faculty,89,415,231,962,Normal
+2026-03-25,Engineering Faculty,123,415,153,1060,Normal
+2026-03-26,Engineering Faculty,184,415,187,1914,High
+2026-03-27,Engineering Faculty,164,415,181,1654,High
+2026-03-28,Engineering Faculty,189,415,176,1985,High
+2026-03-29,Engineering Faculty,197,415,145,1845,High
+2026-03-30,Engineering Faculty,123,415,143,1140,Normal
+2026-03-31,Engineering Faculty,117,415,217,1113,Normal
+2026-03-01,Colleges,154,415,244,1522,High
+2026-03-02,Colleges,119,415,204,1194,Normal
+2026-03-03,Colleges,129,415,196,1265,Normal
+2026-03-04,Colleges,151,415,150,1605,High
+2026-03-05,Colleges,119,415,226,1070,Normal
+2026-03-06,Colleges,125,415,223,1348,Normal
+2026-03-07,Colleges,111,415,218,1120,Normal
+2026-03-08,Colleges,181,415,272,1814,High
+2026-03-09,Colleges,115,415,234,1169,Normal
+2026-03-10,Colleges,175,415,134,1635,High
+2026-03-11,Colleges,177,415,185,1605,High
+2026-03-12,Colleges,134,415,194,1346,Normal
+2026-03-13,Colleges,134,415,200,1310,Normal
+2026-03-14,Colleges,122,415,224,1277,Normal
+2026-03-15,Colleges,174,415,248,1724,High
+2026-03-16,Colleges,155,415,177,1596,High
+2026-03-17,Colleges,99,415,173,1080,Normal
+2026-03-18,Colleges,91,415,268,771,Normal
+2026-03-19,Colleges,142,415,208,1420,Normal
+2026-03-20,Colleges,156,415,262,1566,High
+2026-03-21,Colleges,97,415,266,881,Normal
+2026-03-22,Colleges,187,415,182,1919,High
+2026-03-23,Colleges,187,415,271,1766,High
+2026-03-24,Colleges,112,415,254,1083,Normal
+2026-03-25,Colleges,87,415,183,883,Normal
+2026-03-26,Colleges,137,415,192,1439,Normal
+2026-03-27,Colleges,148,415,295,1494,High
+2026-03-28,Colleges,106,415,173,1075,Normal
+2026-03-29,Colleges,109,415,199,1108,Normal
+2026-03-30,Colleges,195,415,240,1895,High
+2026-03-31,Colleges,172,415,266,1633,High

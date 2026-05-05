@@ -1,0 +1,280 @@
+Date,Location,Bin_ID,Fill_Level,Weight,Temp,Status
+2026-01-01,Cafeteria,BIN-CA-4,81,34,37,Near Full
+2026-01-02,Cafeteria,BIN-CA-1,61,27,32,OK
+2026-01-03,Cafeteria,BIN-CA-3,91,17,38,Full
+2026-01-04,Cafeteria,BIN-CA-3,51,38,30,OK
+2026-01-05,Cafeteria,BIN-CA-3,42,24,25,OK
+2026-01-06,Cafeteria,BIN-CA-1,44,10,39,OK
+2026-01-07,Cafeteria,BIN-CA-2,85,30,32,Near Full
+2026-01-08,Cafeteria,BIN-CA-3,70,28,30,OK
+2026-01-09,Cafeteria,BIN-CA-3,25,16,27,OK
+2026-01-10,Cafeteria,BIN-CA-2,91,29,39,Full
+2026-01-11,Cafeteria,BIN-CA-1,48,29,38,OK
+2026-01-12,Cafeteria,BIN-CA-4,46,38,30,OK
+2026-01-13,Cafeteria,BIN-CA-1,76,38,29,Near Full
+2026-01-14,Cafeteria,BIN-CA-3,46,10,38,OK
+2026-01-15,Cafeteria,BIN-CA-2,87,11,34,Near Full
+2026-01-16,Cafeteria,BIN-CA-3,24,19,25,OK
+2026-01-17,Cafeteria,BIN-CA-1,57,24,28,OK
+2026-01-18,Cafeteria,BIN-CA-4,71,24,37,OK
+2026-01-19,Cafeteria,BIN-CA-1,27,38,39,OK
+2026-01-20,Cafeteria,BIN-CA-4,87,22,26,Near Full
+2026-01-21,Cafeteria,BIN-CA-3,46,28,27,OK
+2026-01-22,Cafeteria,BIN-CA-4,55,35,35,OK
+2026-01-23,Cafeteria,BIN-CA-1,46,29,35,OK
+2026-01-24,Cafeteria,BIN-CA-4,93,15,30,Full
+2026-01-25,Cafeteria,BIN-CA-3,91,24,34,Full
+2026-01-26,Cafeteria,BIN-CA-3,65,21,34,OK
+2026-01-27,Cafeteria,BIN-CA-4,32,39,26,OK
+2026-01-28,Cafeteria,BIN-CA-3,79,21,36,Near Full
+2026-01-29,Cafeteria,BIN-CA-1,87,33,29,Near Full
+2026-01-30,Cafeteria,BIN-CA-3,91,19,25,Full
+2026-01-31,Cafeteria,BIN-CA-2,50,18,30,OK
+2026-01-01,Colleges,BIN-CO-1,70,23,32,OK
+2026-01-02,Colleges,BIN-CO-2,60,20,31,OK
+2026-01-03,Colleges,BIN-CO-2,20,14,29,OK
+2026-01-04,Colleges,BIN-CO-2,55,32,33,OK
+2026-01-05,Colleges,BIN-CO-3,20,31,31,OK
+2026-01-06,Colleges,BIN-CO-3,59,30,39,OK
+2026-01-07,Colleges,BIN-CO-1,92,18,34,Full
+2026-01-08,Colleges,BIN-CO-1,71,30,34,OK
+2026-01-09,Colleges,BIN-CO-3,60,29,33,OK
+2026-01-10,Colleges,BIN-CO-2,94,11,31,Full
+2026-01-11,Colleges,BIN-CO-3,53,26,35,OK
+2026-01-12,Colleges,BIN-CO-4,78,36,27,Near Full
+2026-01-13,Colleges,BIN-CO-4,73,34,31,OK
+2026-01-14,Colleges,BIN-CO-2,71,30,32,OK
+2026-01-15,Colleges,BIN-CO-1,52,38,39,OK
+2026-01-16,Colleges,BIN-CO-2,41,37,26,OK
+2026-01-17,Colleges,BIN-CO-3,68,26,28,OK
+2026-01-18,Colleges,BIN-CO-4,68,31,30,OK
+2026-01-19,Colleges,BIN-CO-1,82,17,25,Near Full
+2026-01-20,Colleges,BIN-CO-1,90,22,38,Full
+2026-01-21,Colleges,BIN-CO-3,70,33,27,OK
+2026-01-22,Colleges,BIN-CO-4,81,39,37,Near Full
+2026-01-23,Colleges,BIN-CO-1,68,38,38,OK
+2026-01-24,Colleges,BIN-CO-4,35,28,26,OK
+2026-01-25,Colleges,BIN-CO-2,20,28,39,OK
+2026-01-26,Colleges,BIN-CO-2,85,37,25,Near Full
+2026-01-27,Colleges,BIN-CO-3,57,13,25,OK
+2026-01-28,Colleges,BIN-CO-1,27,32,31,OK
+2026-01-29,Colleges,BIN-CO-4,22,19,34,OK
+2026-01-30,Colleges,BIN-CO-4,53,10,31,OK
+2026-01-31,Colleges,BIN-CO-4,74,27,31,OK
+2026-01-01,Engineering Faculty,BIN-EN-1,27,34,31,OK
+2026-01-02,Engineering Faculty,BIN-EN-4,86,32,35,Near Full
+2026-01-03,Engineering Faculty,BIN-EN-2,91,34,39,Full
+2026-01-04,Engineering Faculty,BIN-EN-3,86,10,36,Near Full
+2026-01-05,Engineering Faculty,BIN-EN-2,27,12,32,OK
+2026-01-06,Engineering Faculty,BIN-EN-4,97,33,38,Full
+2026-01-07,Engineering Faculty,BIN-EN-4,35,29,29,OK
+2026-01-08,Engineering Faculty,BIN-EN-1,73,23,39,OK
+2026-01-09,Engineering Faculty,BIN-EN-4,74,27,31,OK
+2026-01-10,Engineering Faculty,BIN-EN-3,93,10,31,Full
+2026-01-11,Engineering Faculty,BIN-EN-4,38,38,27,OK
+2026-01-12,Engineering Faculty,BIN-EN-1,55,37,26,OK
+2026-01-13,Engineering Faculty,BIN-EN-1,21,24,29,OK
+2026-01-14,Engineering Faculty,BIN-EN-3,39,19,39,OK
+2026-01-15,Engineering Faculty,BIN-EN-3,21,32,31,OK
+2026-01-16,Engineering Faculty,BIN-EN-4,31,14,29,OK
+2026-01-17,Engineering Faculty,BIN-EN-4,57,39,33,OK
+2026-01-18,Engineering Faculty,BIN-EN-4,72,12,28,OK
+2026-01-19,Engineering Faculty,BIN-EN-1,43,19,38,OK
+2026-01-20,Engineering Faculty,BIN-EN-2,78,32,25,Near Full
+2026-01-21,Engineering Faculty,BIN-EN-1,33,17,26,OK
+2026-01-22,Engineering Faculty,BIN-EN-3,44,18,30,OK
+2026-01-23,Engineering Faculty,BIN-EN-3,41,23,28,OK
+2026-01-24,Engineering Faculty,BIN-EN-2,45,38,37,OK
+2026-01-25,Engineering Faculty,BIN-EN-3,56,15,26,OK
+2026-01-26,Engineering Faculty,BIN-EN-4,61,18,30,OK
+2026-01-27,Engineering Faculty,BIN-EN-1,53,14,33,OK
+2026-01-28,Engineering Faculty,BIN-EN-3,95,30,34,Full
+2026-01-29,Engineering Faculty,BIN-EN-1,46,15,35,OK
+2026-01-30,Engineering Faculty,BIN-EN-2,59,21,37,OK
+2026-01-31,Engineering Faculty,BIN-EN-3,72,19,37,OK
+2026-02-01,Cafeteria,BIN-CA-4,90,38,41,Full
+2026-02-02,Cafeteria,BIN-CA-1,66,28,33,OK
+2026-02-03,Cafeteria,BIN-CA-3,100,17,39,Full
+2026-02-04,Cafeteria,BIN-CA-3,55,40,32,OK
+2026-02-05,Cafeteria,BIN-CA-3,42,26,25,OK
+2026-02-06,Cafeteria,BIN-CA-1,47,10,46,OK
+2026-02-07,Cafeteria,BIN-CA-2,93,27,31,Full
+2026-02-08,Cafeteria,BIN-CA-3,77,28,32,Near Full
+2026-02-09,Cafeteria,BIN-CA-3,28,16,32,OK
+2026-02-10,Cafeteria,BIN-CA-2,99,30,41,Full
+2026-02-11,Cafeteria,BIN-CA-1,51,30,39,OK
+2026-02-12,Cafeteria,BIN-CA-4,51,39,31,OK
+2026-02-13,Cafeteria,BIN-CA-1,80,43,30,Near Full
+2026-02-14,Cafeteria,BIN-CA-3,46,11,43,OK
+2026-02-15,Cafeteria,BIN-CA-2,90,12,31,Full
+2026-02-16,Cafeteria,BIN-CA-3,24,21,29,OK
+2026-02-17,Cafeteria,BIN-CA-1,58,24,27,OK
+2026-02-18,Cafeteria,BIN-CA-4,74,27,38,OK
+2026-02-19,Cafeteria,BIN-CA-1,27,40,40,OK
+2026-02-20,Cafeteria,BIN-CA-4,90,24,28,Full
+2026-02-21,Cafeteria,BIN-CA-3,43,28,26,OK
+2026-02-22,Cafeteria,BIN-CA-4,58,33,38,OK
+2026-02-23,Cafeteria,BIN-CA-1,48,32,41,OK
+2026-02-24,Cafeteria,BIN-CA-4,93,16,29,Full
+2026-02-25,Cafeteria,BIN-CA-3,99,24,36,Full
+2026-02-26,Cafeteria,BIN-CA-3,72,21,34,OK
+2026-02-27,Cafeteria,BIN-CA-4,31,44,28,OK
+2026-02-28,Cafeteria,BIN-CA-3,79,21,38,Near Full
+2026-02-28,Cafeteria,BIN-CA-1,87,38,29,Near Full
+2026-02-28,Cafeteria,BIN-CA-3,90,19,27,Full
+2026-02-28,Cafeteria,BIN-CA-2,55,20,35,OK
+2026-02-01,Colleges,BIN-CO-1,73,24,33,OK
+2026-02-02,Colleges,BIN-CO-2,62,22,34,OK
+2026-02-03,Colleges,BIN-CO-2,19,14,28,OK
+2026-02-04,Colleges,BIN-CO-2,60,33,33,OK
+2026-02-05,Colleges,BIN-CO-3,20,33,33,OK
+2026-02-06,Colleges,BIN-CO-3,62,30,44,OK
+2026-02-07,Colleges,BIN-CO-1,98,20,36,Full
+2026-02-08,Colleges,BIN-CO-1,80,31,35,Near Full
+2026-02-09,Colleges,BIN-CO-3,58,30,35,OK
+2026-02-10,Colleges,BIN-CO-2,82,11,30,Near Full
+2026-02-11,Colleges,BIN-CO-3,56,23,38,OK
+2026-02-12,Colleges,BIN-CO-4,90,37,30,Full
+2026-02-13,Colleges,BIN-CO-4,82,41,32,Near Full
+2026-02-14,Colleges,BIN-CO-2,75,33,33,Near Full
+2026-02-15,Colleges,BIN-CO-1,53,40,42,OK
+2026-02-16,Colleges,BIN-CO-2,45,38,27,OK
+2026-02-17,Colleges,BIN-CO-3,67,27,29,OK
+2026-02-18,Colleges,BIN-CO-4,73,34,35,OK
+2026-02-19,Colleges,BIN-CO-1,89,17,26,Near Full
+2026-02-20,Colleges,BIN-CO-1,100,25,39,Full
+2026-02-21,Colleges,BIN-CO-3,85,36,27,Near Full
+2026-02-22,Colleges,BIN-CO-4,87,43,41,Near Full
+2026-02-23,Colleges,BIN-CO-1,69,41,39,OK
+2026-02-24,Colleges,BIN-CO-4,37,29,26,OK
+2026-02-25,Colleges,BIN-CO-2,19,31,44,OK
+2026-02-26,Colleges,BIN-CO-2,86,40,28,Near Full
+2026-02-27,Colleges,BIN-CO-3,58,13,25,OK
+2026-02-28,Colleges,BIN-CO-1,28,32,29,OK
+2026-02-28,Colleges,BIN-CO-4,23,20,38,OK
+2026-02-28,Colleges,BIN-CO-4,53,11,31,OK
+2026-02-28,Colleges,BIN-CO-4,83,26,34,Near Full
+2026-02-01,Engineering Faculty,BIN-EN-1,28,33,29,OK
+2026-02-02,Engineering Faculty,BIN-EN-4,90,34,39,Full
+2026-02-03,Engineering Faculty,BIN-EN-2,94,36,38,Full
+2026-02-04,Engineering Faculty,BIN-EN-3,91,11,39,Full
+2026-02-05,Engineering Faculty,BIN-EN-2,30,13,34,OK
+2026-02-06,Engineering Faculty,BIN-EN-4,97,34,38,Full
+2026-02-07,Engineering Faculty,BIN-EN-4,35,33,30,OK
+2026-02-08,Engineering Faculty,BIN-EN-1,75,22,43,Near Full
+2026-02-09,Engineering Faculty,BIN-EN-4,72,27,33,OK
+2026-02-10,Engineering Faculty,BIN-EN-3,93,10,34,Full
+2026-02-11,Engineering Faculty,BIN-EN-4,39,36,32,OK
+2026-02-12,Engineering Faculty,BIN-EN-1,61,38,25,OK
+2026-02-13,Engineering Faculty,BIN-EN-1,22,28,33,OK
+2026-02-14,Engineering Faculty,BIN-EN-3,41,20,41,OK
+2026-02-15,Engineering Faculty,BIN-EN-3,23,34,31,OK
+2026-02-16,Engineering Faculty,BIN-EN-4,32,14,28,OK
+2026-02-17,Engineering Faculty,BIN-EN-4,61,40,34,OK
+2026-02-18,Engineering Faculty,BIN-EN-4,75,12,31,Near Full
+2026-02-19,Engineering Faculty,BIN-EN-1,46,20,40,OK
+2026-02-20,Engineering Faculty,BIN-EN-2,79,36,29,Near Full
+2026-02-21,Engineering Faculty,BIN-EN-1,30,18,25,OK
+2026-02-22,Engineering Faculty,BIN-EN-3,46,18,31,OK
+2026-02-23,Engineering Faculty,BIN-EN-3,47,24,27,OK
+2026-02-24,Engineering Faculty,BIN-EN-2,50,41,40,OK
+2026-02-25,Engineering Faculty,BIN-EN-3,62,17,29,OK
+2026-02-26,Engineering Faculty,BIN-EN-4,69,21,31,OK
+2026-02-27,Engineering Faculty,BIN-EN-1,56,14,29,OK
+2026-02-28,Engineering Faculty,BIN-EN-3,101,30,36,Full
+2026-02-28,Engineering Faculty,BIN-EN-1,47,15,38,OK
+2026-02-28,Engineering Faculty,BIN-EN-2,61,22,40,OK
+2026-02-28,Engineering Faculty,BIN-EN-3,78,20,42,Near Full
+2026-03-01,Cafeteria,BIN-CA-4,84,37,39,Near Full
+2026-03-02,Cafeteria,BIN-CA-1,70,30,33,OK
+2026-03-03,Cafeteria,BIN-CA-3,107,17,40,Full
+2026-03-04,Cafeteria,BIN-CA-3,51,43,33,OK
+2026-03-05,Cafeteria,BIN-CA-3,47,25,26,OK
+2026-03-06,Cafeteria,BIN-CA-1,47,10,44,OK
+2026-03-07,Cafeteria,BIN-CA-2,93,30,38,Full
+2026-03-08,Cafeteria,BIN-CA-3,78,33,32,Near Full
+2026-03-09,Cafeteria,BIN-CA-3,27,17,30,OK
+2026-03-10,Cafeteria,BIN-CA-2,96,35,44,Full
+2026-03-11,Cafeteria,BIN-CA-1,53,31,43,OK
+2026-03-12,Cafeteria,BIN-CA-4,48,38,33,OK
+2026-03-13,Cafeteria,BIN-CA-1,79,39,33,Near Full
+2026-03-14,Cafeteria,BIN-CA-3,52,12,43,OK
+2026-03-15,Cafeteria,BIN-CA-2,90,12,35,Full
+2026-03-16,Cafeteria,BIN-CA-3,27,20,29,OK
+2026-03-17,Cafeteria,BIN-CA-1,64,27,32,OK
+2026-03-18,Cafeteria,BIN-CA-4,71,27,39,OK
+2026-03-19,Cafeteria,BIN-CA-1,29,44,43,OK
+2026-03-20,Cafeteria,BIN-CA-4,102,26,30,Full
+2026-03-21,Cafeteria,BIN-CA-3,48,30,29,OK
+2026-03-22,Cafeteria,BIN-CA-4,59,36,41,OK
+2026-03-23,Cafeteria,BIN-CA-1,52,31,43,OK
+2026-03-24,Cafeteria,BIN-CA-4,107,17,32,Full
+2026-03-25,Cafeteria,BIN-CA-3,99,25,35,Full
+2026-03-26,Cafeteria,BIN-CA-3,69,22,38,OK
+2026-03-27,Cafeteria,BIN-CA-4,38,44,30,OK
+2026-03-28,Cafeteria,BIN-CA-3,95,23,39,Full
+2026-03-29,Cafeteria,BIN-CA-1,101,36,34,Full
+2026-03-30,Cafeteria,BIN-CA-3,101,20,25,Full
+2026-03-31,Cafeteria,BIN-CA-2,53,20,34,OK
+2026-03-01,Colleges,BIN-CO-1,74,24,34,OK
+2026-03-02,Colleges,BIN-CO-2,68,23,37,OK
+2026-03-03,Colleges,BIN-CO-2,23,16,35,OK
+2026-03-04,Colleges,BIN-CO-2,65,32,35,OK
+2026-03-05,Colleges,BIN-CO-3,23,32,33,OK
+2026-03-06,Colleges,BIN-CO-3,60,30,45,OK
+2026-03-07,Colleges,BIN-CO-1,107,19,37,Full
+2026-03-08,Colleges,BIN-CO-1,74,33,37,OK
+2026-03-09,Colleges,BIN-CO-3,65,29,36,OK
+2026-03-10,Colleges,BIN-CO-2,105,11,31,Full
+2026-03-11,Colleges,BIN-CO-3,65,27,38,OK
+2026-03-12,Colleges,BIN-CO-4,100,40,29,Full
+2026-03-13,Colleges,BIN-CO-4,83,38,33,Near Full
+2026-03-14,Colleges,BIN-CO-2,77,32,38,Near Full
+2026-03-15,Colleges,BIN-CO-1,59,42,40,OK
+2026-03-16,Colleges,BIN-CO-2,47,39,30,OK
+2026-03-17,Colleges,BIN-CO-3,73,28,30,OK
+2026-03-18,Colleges,BIN-CO-4,82,37,32,Near Full
+2026-03-19,Colleges,BIN-CO-1,91,20,29,Full
+2026-03-20,Colleges,BIN-CO-1,102,22,43,Full
+2026-03-21,Colleges,BIN-CO-3,80,38,31,Near Full
+2026-03-22,Colleges,BIN-CO-4,91,45,43,Full
+2026-03-23,Colleges,BIN-CO-1,78,39,41,Near Full
+2026-03-24,Colleges,BIN-CO-4,37,32,28,OK
+2026-03-25,Colleges,BIN-CO-2,21,33,40,OK
+2026-03-26,Colleges,BIN-CO-2,88,38,26,Near Full
+2026-03-27,Colleges,BIN-CO-3,64,14,32,OK
+2026-03-28,Colleges,BIN-CO-1,31,37,36,OK
+2026-03-29,Colleges,BIN-CO-4,25,21,35,OK
+2026-03-30,Colleges,BIN-CO-4,64,11,32,OK
+2026-03-31,Colleges,BIN-CO-4,81,30,35,Near Full
+2026-03-01,Engineering Faculty,BIN-EN-1,31,38,35,OK
+2026-03-02,Engineering Faculty,BIN-EN-4,89,33,40,Near Full
+2026-03-03,Engineering Faculty,BIN-EN-2,98,40,42,Full
+2026-03-04,Engineering Faculty,BIN-EN-3,98,12,39,Full
+2026-03-05,Engineering Faculty,BIN-EN-2,31,13,36,OK
+2026-03-06,Engineering Faculty,BIN-EN-4,105,36,42,Full
+2026-03-07,Engineering Faculty,BIN-EN-4,38,29,28,OK
+2026-03-08,Engineering Faculty,BIN-EN-1,74,26,42,OK
+2026-03-09,Engineering Faculty,BIN-EN-4,80,31,33,Near Full
+2026-03-10,Engineering Faculty,BIN-EN-3,107,11,34,Full
+2026-03-11,Engineering Faculty,BIN-EN-4,43,44,35,OK
+2026-03-12,Engineering Faculty,BIN-EN-1,62,40,29,OK
+2026-03-13,Engineering Faculty,BIN-EN-1,23,27,31,OK
+2026-03-14,Engineering Faculty,BIN-EN-3,43,20,45,OK
+2026-03-15,Engineering Faculty,BIN-EN-3,22,35,35,OK
+2026-03-16,Engineering Faculty,BIN-EN-4,35,15,33,OK
+2026-03-17,Engineering Faculty,BIN-EN-4,64,43,38,OK
+2026-03-18,Engineering Faculty,BIN-EN-4,81,13,34,Near Full
+2026-03-19,Engineering Faculty,BIN-EN-1,46,21,39,OK
+2026-03-20,Engineering Faculty,BIN-EN-2,76,37,28,Near Full
+2026-03-21,Engineering Faculty,BIN-EN-1,38,18,27,OK
+2026-03-22,Engineering Faculty,BIN-EN-3,47,18,34,OK
+2026-03-23,Engineering Faculty,BIN-EN-3,43,28,29,OK
+2026-03-24,Engineering Faculty,BIN-EN-2,51,45,40,OK
+2026-03-25,Engineering Faculty,BIN-EN-3,60,15,28,OK
+2026-03-26,Engineering Faculty,BIN-EN-4,71,21,35,OK
+2026-03-27,Engineering Faculty,BIN-EN-1,60,15,38,OK
+2026-03-28,Engineering Faculty,BIN-EN-3,108,33,35,Full
+2026-03-29,Engineering Faculty,BIN-EN-1,47,17,39,OK
+2026-03-30,Engineering Faculty,BIN-EN-2,69,23,39,OK
+2026-03-31,Engineering Faculty,BIN-EN-3,80,20,38,Near Full

@@ -1,0 +1,13 @@
+Timestamp,Location,Incident_Type,Severity,Status
+5/1/2026 10:30,Admin Block,Gas Leak,Critical,Assigned
+12/1/2026 14:15,Engineering Faculty,High Temp in Bin,Warning,Resolved
+18/1/2026 9:00,Campus Lake,Critical pH Level,Critical,On Route
+25/1/2026 16:45,Colleges,Power Surge,Warning,Resolved
+6/2/2026 11:20,Cafeteria,Waste Bin Full,Warning,Assigned
+14/2/2026 15:05,Engineering Faculty,High AQI Reading,Warning,Resolved
+21/2/2026 8:40,Admin Block,Energy Spike,Warning,Resolved
+27/2/2026 13:30,Campus Lake,Low Dissolved Oxygen,Critical,On Route
+4/3/2026 9:45,Colleges,High CO2 Level,Warning,Assigned
+11/3/2026 10:10,Main Gate,Traffic Sensor Offline,Warning,Resolved
+19/3/2026 16:00,Engineering Faculty,Critical Energy Load,Critical,Assigned
+26/3/2026 12:25,Cafeteria,High Temp in Bin,Warning,Resolved
