@@ -42,6 +42,12 @@
   100% { transform: translateX(300%); }
 }
 
+/* Chatbot typing dots */
+@keyframes typingDot {
+  0%, 60%, 100% { transform: translateY(0);    opacity: 0.4; }
+  30%            { transform: translateY(-5px); opacity: 1;   }
+}
+
 /* Hide scrollbar (used on tab nav) */
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }

@@ -11,6 +11,7 @@ import Water            from './components/tabs/Water'
 import Waste            from './components/tabs/Waste'
 import Soil             from './components/tabs/Soil'
 import AlertCentre      from './components/tabs/AlertCentre'
+import ChatBot          from './components/ChatBot'
 
 const TAB_COMPONENTS = {
   overview: Overview,
@@ -41,6 +42,7 @@ export default function App() {
         {/* key={} resets tab scroll position on tab switch */}
         <ActiveComponent data={data} filters={filters} key={activeTab} />
       </main>
+      <ChatBot />
     </div>
   )
 }
