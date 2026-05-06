@@ -11,31 +11,27 @@ import ChartCard from '../ChartCard'
 import StatusBadge from '../StatusBadge'
 import CampusMap from '../CampusMap'
 import config from '../../config'
-import { countBy, filterAlerts } from '../../utils/dataUtils'
+import {
+  countBy, filterAlerts, filterRows, aggregateByMonth, avg, round, fmt,
+} from '../../utils/dataUtils'
 
 const RADAR_DATA = [
   { subject: 'Energy',       score: config.esgScore.energy },
   { subject: 'Air Quality',  score: config.esgScore.air    },
   { subject: 'Water',        score: config.esgScore.water  },
   { subject: 'Waste Mgmt',   score: config.esgScore.waste  },
-  { subject: 'Biodiversity', score: config.esgScore.soil   },
+  { subject: 'Soil Health',  score: config.esgScore.soil   },
 ]
 
-const MONTHLY_TREND = [
-  { month: 'Jan', energy: 115990, solar: 324 },
-  { month: 'Feb', energy: 121728, solar: 337 },
-  { month: 'Mar', energy: 126766, solar: 357 },
-]
-
-const TT  = { backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px', fontSize: '12px', color: '#f8fafc' }
-const AX  = { fill: '#6B7280', fontSize: 11 }
+const TT = { backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px', fontSize: '12px', color: '#f8fafc' }
+const AX = { fill: '#6B7280', fontSize: 11 }
 
 const ESGGauge = ({ score }) => {
   const color = score >= 80 ? '#22C55E' : score >= 60 ? '#F59E0B' : '#EF4444'
   const gaugeData = [{ value: score, fill: color }, { value: 100 - score, fill: '#1e293b' }]
   return (
     <div className="relative flex flex-col items-center">
-      <ResponsiveContainer width="100%" height={200}>
+      <ResponsiveContainer width="100%" height={190}>
         <PieChart>
           <Pie data={gaugeData} cx="50%" cy="75%" startAngle={180} endAngle={0}
             innerRadius="55%" outerRadius="80%" paddingAngle={0} dataKey="value" strokeWidth={0}>
@@ -52,16 +48,100 @@ const ESGGauge = ({ score }) => {
   )
 }
 
+const aqiLabel = aqi => aqi <= 50 ? 'Good' : aqi <= 100 ? 'Moderate' : 'Unhealthy'
+
 const Overview = ({ data, filters }) => {
-  // Alerts filtered by global location + month
+
+  // ── Filtered domain data ────────────────────────────────────────────────
+  const filteredEnergy = useMemo(() =>
+    filterRows(data.energy    || [], filters, 'Building', 'Date')
+  , [data.energy, filters])
+
+  const filteredAir = useMemo(() =>
+    filterRows(data.air       || [], filters, 'Location', 'Date')
+  , [data.air, filters])
+
+  const filteredWater = useMemo(() =>
+    filterRows(data.water     || [], filters, 'Location', 'Date')
+  , [data.water, filters])
+
+  const filteredWaste = useMemo(() =>
+    filterRows(data.waste     || [], filters, 'Location', 'Date')
+  , [data.waste, filters])
+
+  const filteredSoil = useMemo(() =>
+    filterRows(data.soil      || [], filters, 'Location', 'Date')
+  , [data.soil, filters])
+
+  const filteredGrid = useMemo(() =>
+    filterRows(data.smartGrid || [], filters, null, 'Date')
+  , [data.smartGrid, filters])
+
+  // ── KPI computations ────────────────────────────────────────────────────
+  const totalKWh = useMemo(() =>
+    Math.round(filteredEnergy.reduce((s, r) => s + (r.Energy_kWh || 0), 0))
+  , [filteredEnergy])
+
+  const avgAQI = useMemo(() => {
+    const vals = filteredAir.map(r => r.AQI).filter(v => v != null && !isNaN(v))
+    return vals.length ? round(avg(vals), 1) : null
+  }, [filteredAir])
+
+  const solarShare = useMemo(() => {
+    const solar = filteredGrid.reduce((s, r) => s + (r.Solar_PV_MWh   || 0), 0)
+    const grid  = filteredGrid.reduce((s, r) => s + (r.Grid_Intake_MWh || 0), 0)
+    return solar + grid > 0 ? round((solar / (solar + grid)) * 100, 1) : null
+  }, [filteredGrid])
+
+  const solarMWh = useMemo(() =>
+    Math.round(filteredGrid.reduce((s, r) => s + (r.Solar_PV_MWh || 0), 0))
+  , [filteredGrid])
+
+  const gridEff = useMemo(() => {
+    const rates = filteredGrid.map(r => r.Efficiency_Rate).filter(v => v != null && !isNaN(v))
+    return rates.length ? round(avg(rates) * 100, 1) : null
+  }, [filteredGrid])
+
+  const waterNormalPct = useMemo(() => {
+    if (!filteredWater.length) return null
+    return round((filteredWater.filter(r => r.Status === 'Normal').length / filteredWater.length) * 100, 1)
+  }, [filteredWater])
+
+  const avgFillLevel = useMemo(() => {
+    const vals = filteredWaste.map(r => r.Fill_Level).filter(v => v != null && !isNaN(v))
+    return vals.length ? round(avg(vals)) : null
+  }, [filteredWaste])
+
+  const fullBins     = useMemo(() => filteredWaste.filter(r => r.Status === 'Full').length,      [filteredWaste])
+  const nearFullBins = useMemo(() => filteredWaste.filter(r => r.Status === 'Near Full').length, [filteredWaste])
+
+  const soilNormalPct = useMemo(() => {
+    if (!filteredSoil.length) return null
+    return round((filteredSoil.filter(r => r.Health_Status === 'Normal').length / filteredSoil.length) * 100, 1)
+  }, [filteredSoil])
+
+  const soilWetPct = useMemo(() => {
+    if (!filteredSoil.length) return null
+    return round((filteredSoil.filter(r => r.Health_Status === 'Wet').length / filteredSoil.length) * 100, 1)
+  }, [filteredSoil])
+
+  const soilDryPct = useMemo(() => {
+    if (!filteredSoil.length) return null
+    return round((filteredSoil.filter(r => r.Health_Status === 'Dry').length / filteredSoil.length) * 100, 1)
+  }, [filteredSoil])
+
+  // ── Alerts (active = not resolved) ─────────────────────────────────────
   const filteredAlerts = useMemo(() =>
     filterAlerts(data.alerts || [], filters)
   , [data.alerts, filters])
 
-  const alertCounts  = useMemo(() => countBy(filteredAlerts, 'Severity'), [filteredAlerts])
-  const alertStatus  = useMemo(() => countBy(filteredAlerts, 'Status'),   [filteredAlerts])
+  const activeAlerts = useMemo(() =>
+    filteredAlerts.filter(a => a.Status !== 'Resolved')
+  , [filteredAlerts])
 
-  // Sort most-recent first (timestamp "D/M/YYYY HH:MM"), take 5
+  const alertCounts = useMemo(() => countBy(activeAlerts, 'Severity'), [activeAlerts])
+  const alertStatus = useMemo(() => countBy(filteredAlerts, 'Status'), [filteredAlerts])
+
   const recentAlerts = useMemo(() => {
     return [...filteredAlerts]
       .sort((a, b) => {
@@ -75,28 +155,76 @@ const Overview = ({ data, filters }) => {
       .slice(0, 5)
   }, [filteredAlerts])
 
-  // Monthly trend — filter to selected month when not "All"
-  const trendData = useMemo(() =>
-    filters.month === 'All'
-      ? MONTHLY_TREND
-      : MONTHLY_TREND.filter(d => d.month === filters.month)
-  , [filters.month])
+  // ── Monthly energy trend (respects location filter, always shows all 3 months) ──
+  const trendData = useMemo(() => {
+    // Apply location filter but ignore month so all 3 bars always render
+    const energyForTrend = filterRows(
+      data.energy || [],
+      { location: filters.location, month: 'All' },
+      'Building', 'Date'
+    )
+    const energyMonthly = aggregateByMonth(energyForTrend, 'Date', 'Energy_kWh')
+    const solarMonthly  = aggregateByMonth(data.smartGrid || [], 'Date', 'Solar_PV_MWh')
+    const all = energyMonthly.map((e, i) => ({
+      month:  e.month,
+      energy: e.sum,
+      solar:  Math.round(solarMonthly[i]?.sum || 0),
+    }))
+    return filters.month === 'All' ? all : all.filter(d => d.month === filters.month)
+  }, [data.energy, data.smartGrid, filters])
 
-  const totalAlerts    = filteredAlerts.length
-  const criticalCount  = alertCounts.Critical || 0
-  const warningCount   = alertCounts.Warning  || 0
-  const totalSeverity  = criticalCount + warningCount || 1
+  const totalAlerts   = activeAlerts.length
+  const criticalCount = alertCounts.Critical || 0
+  const warningCount  = alertCounts.Warning  || 0
+  const totalSeverity = criticalCount + warningCount || 1
 
   const kpis = [
-    { title: 'Total Energy',  value: '364,484', unit: 'kWh', subtitle: '3 buildings · Q1 2026',      color: '#3B82F6', icon: Zap          },
-    { title: 'Avg AQI',       value: '78.0',    unit: '',    subtitle: 'Moderate — rising trend',     color: '#06B6D4', icon: Wind         },
-    { title: 'Solar Share',   value: '24.7',    unit: '%',   subtitle: '1,018 MWh generated',         color: '#FBBF24', icon: Sun          },
-    { title: 'Grid Eff.',     value: '96.4',    unit: '%',   subtitle: '3,110 MWh grid intake',       color: '#8B5CF6', icon: Activity     },
-    { title: 'Water Normal',  value: '68.3',    unit: '%',   subtitle: '31.7% warning readings',      color: '#6366F1', icon: Droplets     },
-    { title: 'Avg Fill Lvl',  value: '63',      unit: '%',   subtitle: '51 full · 46 near-full bins', color: '#F97316', icon: Trash2       },
-    { title: 'Soil Normal',   value: '58.6',    unit: '%',   subtitle: '35.5% wet · 5.9% dry',        color: '#84CC16', icon: Leaf         },
-    { title: 'Active Alerts', value: String(totalAlerts), unit: '',
-      subtitle: `${criticalCount} critical · ${warningCount} warning`,                                 color: '#EF4444', icon: AlertTriangle },
+    {
+      title: 'Total Energy', value: totalKWh ? fmt(totalKWh) : '—', unit: totalKWh ? 'kWh' : '',
+      subtitle: filters.location !== 'All' ? `${filters.location} · Q1 2026` : '3 buildings · Q1 2026',
+      color: '#3B82F6', icon: Zap,
+    },
+    {
+      title: 'Avg AQI', value: avgAQI ?? '—', unit: '',
+      subtitle: avgAQI != null ? `${aqiLabel(avgAQI)} — filtered` : 'No air sensors at location',
+      color: '#06B6D4', icon: Wind,
+    },
+    {
+      title: 'Solar Share', value: solarShare ?? '—', unit: solarShare != null ? '%' : '',
+      subtitle: solarMWh ? `${fmt(solarMWh)} MWh generated` : 'No grid data',
+      color: '#FBBF24', icon: Sun,
+    },
+    {
+      title: 'Grid Eff.', value: gridEff ?? '—', unit: gridEff != null ? '%' : '',
+      subtitle: 'Smart grid average',
+      color: '#8B5CF6', icon: Activity,
+    },
+    {
+      title: 'Water Normal', value: waterNormalPct ?? '—', unit: waterNormalPct != null ? '%' : '',
+      subtitle: waterNormalPct != null
+        ? `${round(100 - waterNormalPct, 1)}% warning readings`
+        : 'No water sensors at location',
+      color: '#6366F1', icon: Droplets,
+    },
+    {
+      title: 'Avg Fill Lvl', value: avgFillLevel ?? '—', unit: avgFillLevel != null ? '%' : '',
+      subtitle: avgFillLevel != null
+        ? `${fullBins} full · ${nearFullBins} near-full bins`
+        : 'No waste sensors at location',
+      color: '#F97316', icon: Trash2,
+    },
+    {
+      title: 'Soil Normal', value: soilNormalPct ?? '—', unit: soilNormalPct != null ? '%' : '',
+      subtitle: soilNormalPct != null
+        ? `${soilWetPct}% wet · ${soilDryPct}% dry`
+        : 'No soil sensors at location',
+      color: '#84CC16', icon: Leaf,
+    },
+    {
+      title: 'Active Alerts', value: String(totalAlerts), unit: '',
+      subtitle: `${criticalCount} critical · ${warningCount} warning`,
+      color: '#EF4444', icon: AlertTriangle,
+    },
   ]
 
   return (
@@ -104,15 +232,34 @@ const Overview = ({ data, filters }) => {
 
       {/* Row 1 — ESG Gauge + KPI Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        <ChartCard title="ESG Score" subtitle={`${config.university.shortName} Smart Campus · ${config.dashboard.period}`} className="lg:col-span-1">
+        <ChartCard
+          title="ESG Score"
+          subtitle={`${config.university.shortName} Smart Campus · ${config.dashboard.period}`}
+          className="lg:col-span-1"
+        >
           <ESGGauge score={config.esgScore.composite} />
-          <div className="grid grid-cols-5 gap-1 mt-2">
-            {RADAR_DATA.map(d => (
-              <div key={d.subject} className="text-center">
-                <div className="text-xs font-bold text-emerald-400">{d.score}</div>
-                <div className="text-[10px] text-gray-500 leading-tight">{d.subject.split(' ')[0]}</div>
-              </div>
-            ))}
+
+          {/* Dimension breakdown — mini progress bars */}
+          <div className="space-y-2 mt-2">
+            {RADAR_DATA.map(d => {
+              const barColor = d.score >= 80 ? '#22C55E' : d.score >= 60 ? '#F59E0B' : '#EF4444'
+              return (
+                <div key={d.subject} className="flex items-center gap-2">
+                  <div className="w-14 text-[10px] text-gray-500 text-right truncate flex-shrink-0">
+                    {d.subject.split(' ')[0]}
+                  </div>
+                  <div className="flex-1 h-1.5 bg-[#1E293B] rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full"
+                      style={{ width: `${d.score}%`, backgroundColor: barColor, transition: 'width 0.8s ease-out' }}
+                    />
+                  </div>
+                  <div className="text-[11px] font-bold w-6 text-right flex-shrink-0" style={{ color: barColor }}>
+                    {d.score}
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </ChartCard>
 
@@ -137,7 +284,11 @@ const Overview = ({ data, filters }) => {
 
         <ChartCard
           title="Monthly Energy Trend"
-          subtitle={filters.month !== 'All' ? `${filters.month} 2026 — filtered` : 'Total kWh · Jan to Mar 2026'}
+          subtitle={
+            filters.location !== 'All'
+              ? `${filters.location} · ${filters.month !== 'All' ? filters.month : 'Jan – Mar'} 2026`
+              : filters.month !== 'All' ? `${filters.month} 2026 — filtered` : 'Total kWh · Jan to Mar 2026'
+          }
         >
           <ResponsiveContainer width="100%" height={260}>
             <AreaChart data={trendData} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
@@ -168,7 +319,7 @@ const Overview = ({ data, filters }) => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <ChartCard
           title="Recent Alerts"
-          subtitle={`${recentAlerts.length} of ${totalAlerts} filtered alerts — latest first`}
+          subtitle={`${recentAlerts.length} of ${filteredAlerts.length} filtered alerts — latest first`}
           className="md:col-span-2"
         >
           <div className="overflow-x-auto">
@@ -200,7 +351,7 @@ const Overview = ({ data, filters }) => {
           </div>
         </ChartCard>
 
-        <ChartCard title="Alert Summary" subtitle="By severity & status — filtered">
+        <ChartCard title="Alert Summary" subtitle="Active (unresolved) · filtered">
           <div className="space-y-4">
             {[
               { label: 'Critical', count: criticalCount, color: '#EF4444' },
@@ -220,7 +371,6 @@ const Overview = ({ data, filters }) => {
               </div>
             ))}
 
-            {/* Status breakdown */}
             <div className="pt-2 border-t border-[#1E293B] grid grid-cols-3 gap-2 text-center">
               {Object.entries(alertStatus).length > 0
                 ? Object.entries(alertStatus).map(([s, c]) => (
@@ -233,9 +383,8 @@ const Overview = ({ data, filters }) => {
               }
             </div>
 
-            {/* Total */}
             <div className="pt-2 border-t border-[#1E293B] flex items-center justify-between text-xs">
-              <span className="text-gray-500">Total filtered</span>
+              <span className="text-gray-500">Active (unresolved)</span>
               <span className="font-bold text-white">{totalAlerts}</span>
             </div>
           </div>

@@ -2,9 +2,9 @@ import React, { useMemo } from 'react'
 import {
   BarChart, Bar, LineChart, Line, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
-  ResponsiveContainer, Cell, RadialBarChart, RadialBar,
+  ResponsiveContainer, Cell,
 } from 'recharts'
-import { Zap, Sun, Battery, TrendingUp } from 'lucide-react'
+import { Zap, Sun, Battery, TrendingUp, Cloud } from 'lucide-react'
 import KPICard from '../KPICard'
 import ChartCard from '../ChartCard'
 import { aggregateByMonth, pivotByDate, avg, round, fmt, filterRows } from '../../utils/dataUtils'
@@ -13,6 +13,41 @@ const TT  = { backgroundColor: '#1e293b', border: '1px solid #334155', borderRad
 const AX  = { fill: '#6B7280', fontSize: 11 }
 const BUILDINGS = ['Admin Block', 'Engineering Faculty', 'Colleges']
 const B_COLORS  = { 'Admin Block': '#3B82F6', 'Engineering Faculty': '#06B6D4', 'Colleges': '#8B5CF6' }
+
+const BatteryGauge = ({ value }) => {
+  const pct = Math.min(100, Math.max(0, value))
+  const r   = 72
+  const circ = 2 * Math.PI * r
+  const offset = circ * (1 - pct / 100)
+  const color = pct >= 60 ? '#22C55E' : pct >= 30 ? '#F59E0B' : '#EF4444'
+  return (
+    <div className="flex items-center justify-center py-4">
+      <div className="relative" style={{ width: 190, height: 190 }}>
+        <svg viewBox="0 0 190 190" style={{ width: '100%', height: '100%' }}>
+          {/* Track */}
+          <circle cx="95" cy="95" r={r} fill="none" stroke="#1E293B" strokeWidth="18" />
+          {/* Progress — rotate so 0% starts at top */}
+          <circle
+            cx="95" cy="95" r={r}
+            fill="none"
+            stroke={color}
+            strokeWidth="18"
+            strokeLinecap="round"
+            strokeDasharray={circ}
+            strokeDashoffset={offset}
+            transform="rotate(-90 95 95)"
+            style={{ transition: 'stroke-dashoffset 0.8s ease-out' }}
+          />
+        </svg>
+        {/* Centred label — sits in the hole, never overlaps the ring */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <span className="text-4xl font-black leading-none" style={{ color }}>{pct}%</span>
+          <span className="text-xs text-gray-500 mt-1">Average</span>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 const Energy = ({ data, filters }) => {
   // ── Filtered rows ────────────────────────────────────────────────────────
@@ -40,6 +75,11 @@ const Energy = ({ data, filters }) => {
   const solarTotal = useMemo(() =>
     Math.round(gridRows.reduce((s, r) => s + (r.Solar_PV_MWh || 0), 0))
   , [gridRows])
+
+  // Malaysia grid emission factor: 0.585 kgCO₂/kWh → convert to tonnes
+  const co2Tonnes = useMemo(() =>
+    round(totalKWh * 0.585 / 1000, 1)
+  , [totalKWh])
 
   // ── Building energy bar (from filtered rows) ─────────────────────────────
   const buildingKWh = useMemo(() => {
@@ -86,8 +126,6 @@ const Energy = ({ data, filters }) => {
     }))
   , [monthlyGrid, monthlySolar])
 
-  const batteryData = [{ name: 'Battery', value: avgBattery || 90, fill: '#22C55E' }]
-
   const noData = energyRows.length === 0
 
   return (
@@ -99,11 +137,12 @@ const Energy = ({ data, filters }) => {
       )}
 
       {/* KPIs */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         <KPICard title="Total Energy"    value={fmt(totalKWh)} unit="kWh" subtitle="Filtered selection" color="#3B82F6" icon={Zap} />
         <KPICard title="Peak Power"      value={fmt(peakKW)}   unit="kW"  subtitle="Highest single reading" color="#F97316" icon={TrendingUp} />
         <KPICard title="Solar Generated" value={fmt(solarTotal)} unit="MWh" subtitle="PV generation" color="#FBBF24" icon={Sun} />
         <KPICard title="Avg Battery"     value={avgBattery || '—'} unit="%" subtitle="Storage level" color="#22C55E" icon={Battery} />
+        <KPICard title="CO₂ Estimate"    value={co2Tonnes || '—'} unit="t" subtitle="Scope 2 · 0.585 kgCO₂/kWh" color="#94A3B8" icon={Cloud} />
       </div>
 
       {/* Building energy + Daily power */}
@@ -165,18 +204,7 @@ const Energy = ({ data, filters }) => {
         </ChartCard>
 
         <ChartCard title="Battery Level" subtitle={`Avg ${avgBattery || 90}% — campus storage`}>
-          <div className="flex flex-col items-center">
-            <ResponsiveContainer width="100%" height={180}>
-              <RadialBarChart cx="50%" cy="50%" innerRadius="55%" outerRadius="85%" barSize={20}
-                data={batteryData} startAngle={90} endAngle={-270}>
-                <RadialBar background={{ fill: '#1E293B' }} clockWise dataKey="value" cornerRadius={6} />
-              </RadialBarChart>
-            </ResponsiveContainer>
-            <div className="text-center -mt-12">
-              <div className="text-3xl font-black text-emerald-400">{avgBattery || 90}%</div>
-              <div className="text-xs text-gray-500">Average</div>
-            </div>
-          </div>
+          <BatteryGauge value={avgBattery || 90} />
         </ChartCard>
       </div>
 

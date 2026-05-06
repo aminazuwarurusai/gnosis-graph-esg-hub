@@ -1,0 +1,808 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Campus ESG Intelligence Dashboard</title>
+<link rel="icon" type="image/png" href="/unimas-logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+*{box-sizing:border-box}
+body{font-family:'Inter',ui-sans-serif,sans-serif;background:#0A0F1E;color:#F8FAFC;-webkit-font-smoothing:antialiased;margin:0}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:#0A0F1E}
+::-webkit-scrollbar-thumb{background:#374151;border-radius:3px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:.7}}
+@keyframes typingDot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+@keyframes chatSlide{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeIn .4s ease-out}
+.card{background:#111827;border:1px solid #1E293B;border-radius:12px;padding:20px}
+.kpi{background:#111827;border:1px solid #1E293B;border-radius:12px;padding:16px}
+.pill{padding:4px 10px;border-radius:8px;font-size:11px;font-weight:500;white-space:nowrap;border:1px solid #1E293B;color:#9CA3AF;background:transparent;cursor:pointer;transition:all .15s}
+.pill:hover{border-color:#374151;color:#e2e8f0;background:#1E293B}
+.pill.ab{background:rgba(59,130,246,.2);color:#60a5fa;border-color:rgba(59,130,246,.4)}
+.pill.ag{background:rgba(34,197,94,.2);color:#4ade80;border-color:rgba(34,197,94,.4)}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;border:1px solid}
+.filter-btn{padding:4px 10px;border-radius:8px;font-size:11px;font-weight:500;border:1px solid #1E293B;color:#9CA3AF;background:transparent;cursor:pointer;transition:all .15s}
+.filter-btn:hover{color:#e5e7eb;background:#1E293B}
+.filter-btn.active{background:rgba(34,197,94,.2);color:#4ade80;border-color:rgba(34,197,94,.3)}
+.bg{background:rgba(34,197,94,.15);color:#4ade80;border-color:rgba(34,197,94,.3)}
+.ba{background:rgba(245,158,11,.15);color:#fbbf24;border-color:rgba(245,158,11,.3)}
+.br{background:rgba(239,68,68,.15);color:#f87171;border-color:rgba(239,68,68,.3)}
+.bb{background:rgba(6,182,212,.15);color:#22d3ee;border-color:rgba(6,182,212,.3)}
+.trow:hover{background:rgba(255,255,255,.04)}
+.scroll-hide{scrollbar-width:none;-ms-overflow-style:none}
+.scroll-hide::-webkit-scrollbar{display:none}
+.leaflet-container{background:#0f172a!important}
+.leaflet-popup-content-wrapper{background:#1e293b!important;border:1px solid #334155!important;border-radius:10px!important;box-shadow:0 8px 32px rgba(0,0,0,.6)!important;padding:0!important}
+.leaflet-popup-content{margin:0!important}
+.leaflet-popup-tip-container{display:none}
+.leaflet-popup-close-button{color:#6B7280!important;top:4px!important;right:6px!important}
+.leaflet-control-zoom a{background:#1e293b!important;color:#d1d5db!important;border-color:#334155!important}
+.leaflet-control-attribution{background:rgba(15,23,42,.8)!important;color:#6B7280!important;font-size:9px!important}
+.card canvas{display:block;width:100%!important;max-width:100%}
+.brand-logo{height:28px;width:auto;object-fit:contain;display:block}
+.urus-logo{height:24px;width:auto;object-fit:contain;display:block}
+@media(max-width:900px){
+  .desktop-only{display:none!important}
+  main{padding:16px!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header style="position:sticky;top:0;z-index:50;background:rgba(10,15,30,.96);border-bottom:1px solid #1E293B;backdrop-filter:blur(12px)">
+  <div style="max-width:1600px;margin:0 auto;padding:0 24px">
+    <div style="display:flex;align-items:center;justify-content:space-between;height:56px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <img src="/unimas-logo.png" onerror="this.onerror=null;this.src='public/unimas-logo.png'" alt="UNIMAS Logo" class="brand-logo" />
+        <div style="width:1px;height:28px;background:#1E293B"></div>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:14px;font-weight:700;color:#fff">UNIMAS</span>
+            <span style="font-size:11px;color:#6B7280;font-weight:500">ISuRE</span>
+          </div>
+          <div style="font-size:11px;color:#6B7280">Campus ESG Intelligence Dashboard</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px">
+        <div class="desktop-only" style="display:flex;align-items:center;gap:8px;padding-right:16px;border-right:1px solid #1E293B">
+          <img src="/urus-ai-logo.png" onerror="this.onerror=null;this.src='public/urus-ai-logo.png'" alt="URUS AI" class="urus-logo" />
+          <div>
+            <div style="font-size:9px;color:#6B7280;text-transform:uppercase;letter-spacing:.1em">Powered by</div>
+            <div style="font-size:11px;font-weight:600;color:#d1d5db">URUS AI SDN BHD</div>
+          </div>
+        </div>
+        <div class="desktop-only" style="font-size:11px;color:#6B7280">Q1 2026 (Jan – Mar)</div>
+        <div class="desktop-only" style="text-align:right">
+          <div id="hdate" style="font-size:11px;color:#6B7280"></div>
+          <div id="htime" style="font-size:11px;font-family:monospace;color:#d1d5db"></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3)">
+          <div style="width:6px;height:6px;border-radius:50%;background:#22C55E;animation:pulse 2s ease-in-out infinite"></div>
+          <span style="font-size:11px;font-weight:600;color:#4ade80">LIVE</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════ TAB NAV ═══════════════ -->
+<nav style="position:sticky;top:56px;z-index:40;background:rgba(10,15,30,.96);border-bottom:1px solid #1E293B;backdrop-filter:blur(12px)">
+  <div style="max-width:1600px;margin:0 auto;padding:0 24px">
+    <div class="scroll-hide" style="display:flex;gap:4px;padding:8px 0;overflow-x:auto">
+      <button class="tab-btn active-tab" data-tab="overview"  onclick="switchTab('overview')"  style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;white-space:nowrap;border:1px solid rgba(34,197,94,.3);background:rgba(34,197,94,.2);color:#4ade80;cursor:pointer">🌐 Overview</button>
+      <button class="tab-btn" data-tab="energy"   onclick="switchTab('energy')"   style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;white-space:nowrap;border:1px solid transparent;background:transparent;color:#9CA3AF;cursor:pointer">⚡ Energy</button>
+      <button class="tab-btn" data-tab="air"      onclick="switchTab('air')"      style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;white-space:nowrap;border:1px solid transparent;background:transparent;color:#9CA3AF;cursor:pointer">💨 Air Quality</button>
+      <button class="tab-btn" data-tab="water"    onclick="switchTab('water')"    style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;white-space:nowrap;border:1px solid transparent;background:transparent;color:#9CA3AF;cursor:pointer">💧 Water</button>
+      <button class="tab-btn" data-tab="waste"    onclick="switchTab('waste')"    style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;white-space:nowrap;border:1px solid transparent;background:transparent;color:#9CA3AF;cursor:pointer">🗑️ Waste</button>
+      <button class="tab-btn" data-tab="soil"     onclick="switchTab('soil')"     style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;white-space:nowrap;border:1px solid transparent;background:transparent;color:#9CA3AF;cursor:pointer">🌱 Soil</button>
+      <button class="tab-btn" data-tab="alerts"   onclick="switchTab('alerts')"   style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;white-space:nowrap;border:1px solid transparent;background:transparent;color:#9CA3AF;cursor:pointer">🔔 Alert Centre <span style="background:#EF4444;color:#fff;font-size:10px;font-weight:700;padding:1px 5px;border-radius:999px;margin-left:2px">6</span></button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════ FILTER BAR ═══════════════ -->
+<div style="position:sticky;top:96px;z-index:30;background:rgba(10,15,30,.97);border-bottom:1px solid #1E293B;backdrop-filter:blur(12px)">
+  <div style="max-width:1600px;margin:0 auto;padding:0 24px">
+    <div class="scroll-hide" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:8px 0;overflow-x:auto">
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <span style="color:#60a5fa;font-size:12px">📍</span>
+        <span style="font-size:11px;color:#6B7280;font-weight:500">Location</span>
+      </div>
+      <div style="display:flex;gap:4px">
+        <button class="pill ab" onclick="setLoc(this,'All')">All</button>
+        <button class="pill" onclick="setLoc(this,'Admin Block')">Admin Block</button>
+        <button class="pill" onclick="setLoc(this,'Engineering Faculty')">Engineering Faculty</button>
+        <button class="pill" onclick="setLoc(this,'Campus Lake')">Campus Lake</button>
+        <button class="pill" onclick="setLoc(this,'Cafeteria')">Cafeteria</button>
+        <button class="pill" onclick="setLoc(this,'Colleges')">Colleges</button>
+      </div>
+      <div style="width:1px;height:20px;background:#1E293B;flex-shrink:0"></div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <span style="color:#4ade80;font-size:12px">📅</span>
+        <span style="font-size:11px;color:#6B7280;font-weight:500">Period</span>
+      </div>
+      <div style="display:flex;gap:4px">
+        <button class="pill ag" onclick="setMon(this,'All')">All</button>
+        <button class="pill" onclick="setMon(this,'Jan')">Jan</button>
+        <button class="pill" onclick="setMon(this,'Feb')">Feb</button>
+        <button class="pill" onclick="setMon(this,'Mar')">Mar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ MAIN CONTENT ═══════════════ -->
+<main style="max-width:1600px;margin:0 auto;padding:24px;padding-bottom:80px">
+
+<!-- ══════ OVERVIEW TAB ══════ -->
+<div id="tab-overview" class="tab-panel active">
+  <!-- Row 1: ESG Gauge + KPIs -->
+  <div style="display:grid;grid-template-columns:1fr 3fr;gap:16px;margin-bottom:16px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;color:#d1d5db">ESG Score</div>
+      <div style="font-size:11px;color:#6B7280;margin-top:2px">UNIMAS Smart Campus · Q1 2026</div>
+      <div style="position:relative;margin-top:8px">
+        <canvas id="esgGauge" height="160"></canvas>
+        <div style="position:absolute;bottom:28px;left:0;right:0;text-align:center;pointer-events:none">
+          <div style="font-size:36px;font-weight:900;color:#22C55E;line-height:1">75</div>
+          <div style="font-size:12px;color:#9CA3AF">/100</div>
+          <div style="font-size:10px;color:#6B7280;margin-top:2px">ESG Composite</div>
+        </div>
+      </div>
+      <!-- Mini progress bars -->
+      <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">
+        <div style="display:flex;align-items:center;gap:8px"><span style="width:52px;font-size:10px;color:#6B7280;text-align:right;flex-shrink:0">Energy</span><div style="flex:1;height:6px;background:#1E293B;border-radius:999px;overflow:hidden"><div style="height:100%;width:78%;background:#22C55E;border-radius:999px"></div></div><span style="font-size:11px;font-weight:700;color:#22C55E;width:20px;text-align:right">78</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="width:52px;font-size:10px;color:#6B7280;text-align:right;flex-shrink:0">Air</span><div style="flex:1;height:6px;background:#1E293B;border-radius:999px;overflow:hidden"><div style="height:100%;width:72%;background:#F59E0B;border-radius:999px"></div></div><span style="font-size:11px;font-weight:700;color:#F59E0B;width:20px;text-align:right">72</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="width:52px;font-size:10px;color:#6B7280;text-align:right;flex-shrink:0">Water</span><div style="flex:1;height:6px;background:#1E293B;border-radius:999px;overflow:hidden"><div style="height:100%;width:70%;background:#F59E0B;border-radius:999px"></div></div><span style="font-size:11px;font-weight:700;color:#F59E0B;width:20px;text-align:right">70</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="width:52px;font-size:10px;color:#6B7280;text-align:right;flex-shrink:0">Waste</span><div style="flex:1;height:6px;background:#1E293B;border-radius:999px;overflow:hidden"><div style="height:100%;width:68%;background:#F59E0B;border-radius:999px"></div></div><span style="font-size:11px;font-weight:700;color:#F59E0B;width:20px;text-align:right">68</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="width:52px;font-size:10px;color:#6B7280;text-align:right;flex-shrink:0">Soil</span><div style="flex:1;height:6px;background:#1E293B;border-radius:999px;overflow:hidden"><div style="height:100%;width:82%;background:#22C55E;border-radius:999px"></div></div><span style="font-size:11px;font-weight:700;color:#22C55E;width:20px;text-align:right">82</span></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+      <div class="kpi"><div style="display:flex;justify-content:space-between;align-items:flex-start"><span style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.05em;font-weight:500">Total Energy</span><div style="background:rgba(59,130,246,.15);padding:6px;border-radius:8px">⚡</div></div><div style="font-size:24px;font-weight:700;color:#fff;margin-top:4px">364,484 <span style="font-size:13px;color:#9CA3AF;font-weight:400">kWh</span></div><div style="font-size:11px;color:#6B7280">3 buildings · Q1 2026</div></div>
+      <div class="kpi"><div style="display:flex;justify-content:space-between;align-items:flex-start"><span style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.05em;font-weight:500">Avg AQI</span><div style="background:rgba(6,182,212,.15);padding:6px;border-radius:8px">💨</div></div><div style="font-size:24px;font-weight:700;color:#fff;margin-top:4px">78.0</div><div style="font-size:11px;color:#6B7280">Moderate — rising trend</div></div>
+      <div class="kpi"><div style="display:flex;justify-content:space-between;align-items:flex-start"><span style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.05em;font-weight:500">Solar Share</span><div style="background:rgba(251,191,36,.15);padding:6px;border-radius:8px">☀️</div></div><div style="font-size:24px;font-weight:700;color:#fff;margin-top:4px">24.7 <span style="font-size:13px;color:#9CA3AF;font-weight:400">%</span></div><div style="font-size:11px;color:#6B7280">1,018 MWh generated</div></div>
+      <div class="kpi"><div style="display:flex;justify-content:space-between;align-items:flex-start"><span style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.05em;font-weight:500">Grid Eff.</span><div style="background:rgba(139,92,246,.15);padding:6px;border-radius:8px">📊</div></div><div style="font-size:24px;font-weight:700;color:#fff;margin-top:4px">96.4 <span style="font-size:13px;color:#9CA3AF;font-weight:400">%</span></div><div style="font-size:11px;color:#6B7280">3,110 MWh grid intake</div></div>
+      <div class="kpi"><div style="display:flex;justify-content:space-between;align-items:flex-start"><span style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.05em;font-weight:500">Water Normal</span><div style="background:rgba(99,102,241,.15);padding:6px;border-radius:8px">💧</div></div><div style="font-size:24px;font-weight:700;color:#fff;margin-top:4px">68.3 <span style="font-size:13px;color:#9CA3AF;font-weight:400">%</span></div><div style="font-size:11px;color:#6B7280">31.7% warning readings</div></div>
+      <div class="kpi"><div style="display:flex;justify-content:space-between;align-items:flex-start"><span style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.05em;font-weight:500">Avg Fill Lvl</span><div style="background:rgba(249,115,22,.15);padding:6px;border-radius:8px">🗑️</div></div><div style="font-size:24px;font-weight:700;color:#fff;margin-top:4px">63 <span style="font-size:13px;color:#9CA3AF;font-weight:400">%</span></div><div style="font-size:11px;color:#6B7280">51 full · 46 near-full bins</div></div>
+      <div class="kpi"><div style="display:flex;justify-content:space-between;align-items:flex-start"><span style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.05em;font-weight:500">Soil Normal</span><div style="background:rgba(132,204,22,.15);padding:6px;border-radius:8px">🌱</div></div><div style="font-size:24px;font-weight:700;color:#fff;margin-top:4px">58.6 <span style="font-size:13px;color:#9CA3AF;font-weight:400">%</span></div><div style="font-size:11px;color:#6B7280">35.5% wet · 5.9% dry</div></div>
+      <div class="kpi"><div style="display:flex;justify-content:space-between;align-items:flex-start"><span style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.05em;font-weight:500">Active Alerts</span><div style="background:rgba(239,68,68,.15);padding:6px;border-radius:8px">🚨</div></div><div style="font-size:24px;font-weight:700;color:#fff;margin-top:4px">6</div><div style="font-size:11px;color:#6B7280">4 critical · 2 warning</div></div>
+    </div>
+  </div>
+
+  <!-- Row 2: Radar + Energy Trend -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;color:#d1d5db">ESG Dimension Scores</div>
+      <div style="font-size:11px;color:#6B7280;margin-top:2px">Radar view — Q1 2026 average</div>
+      <canvas id="esgRadar" style="margin-top:12px" height="260"></canvas>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;color:#d1d5db">Monthly Energy Trend</div>
+      <div style="font-size:11px;color:#6B7280;margin-top:2px">Total kWh · Jan to Mar 2026</div>
+      <canvas id="energyTrend" style="margin-top:12px" height="260"></canvas>
+    </div>
+  </div>
+
+  <!-- Row 3: Recent Alerts + Alert Summary -->
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;color:#d1d5db">Recent Alerts</div>
+      <div style="font-size:11px;color:#6B7280;margin-top:2px">5 of 12 filtered alerts — latest first</div>
+      <div style="overflow-x:auto;margin-top:16px">
+        <table style="width:100%;font-size:11px;border-collapse:collapse">
+          <thead><tr style="color:#6B7280;border-bottom:1px solid #1E293B">
+            <th style="text-align:left;padding:6px 12px 6px 0;font-weight:500">Timestamp</th>
+            <th style="text-align:left;padding:6px 12px 6px 0;font-weight:500">Location</th>
+            <th style="text-align:left;padding:6px 12px 6px 0;font-weight:500">Incident</th>
+            <th style="text-align:left;padding:6px 12px 6px 0;font-weight:500">Severity</th>
+            <th style="text-align:left;padding:6px 0;font-weight:500">Status</th>
+          </tr></thead>
+          <tbody>
+            <tr class="trow" style="border-bottom:1px solid rgba(30,41,59,.5)"><td style="padding:8px 12px 8px 0;color:#9CA3AF;font-family:monospace">26/3/2026 12:25</td><td style="padding:8px 12px 8px 0;color:#d1d5db">Cafeteria</td><td style="padding:8px 12px 8px 0;color:#fff;font-weight:500">High Temp in Bin</td><td style="padding:8px 12px 8px 0"><span class="badge ba">Warning</span></td><td style="padding:8px 0"><span class="badge bg">Resolved</span></td></tr>
+            <tr class="trow" style="border-bottom:1px solid rgba(30,41,59,.5)"><td style="padding:8px 12px 8px 0;color:#9CA3AF;font-family:monospace">19/3/2026 16:00</td><td style="padding:8px 12px 8px 0;color:#d1d5db">Engineering Faculty</td><td style="padding:8px 12px 8px 0;color:#fff;font-weight:500">Critical Energy Load</td><td style="padding:8px 12px 8px 0"><span class="badge br">Critical</span></td><td style="padding:8px 0"><span class="badge ba">Assigned</span></td></tr>
+            <tr class="trow" style="border-bottom:1px solid rgba(30,41,59,.5)"><td style="padding:8px 12px 8px 0;color:#9CA3AF;font-family:monospace">11/3/2026 10:10</td><td style="padding:8px 12px 8px 0;color:#d1d5db">Main Gate</td><td style="padding:8px 12px 8px 0;color:#fff;font-weight:500">Traffic Sensor Offline</td><td style="padding:8px 12px 8px 0"><span class="badge ba">Warning</span></td><td style="padding:8px 0"><span class="badge bg">Resolved</span></td></tr>
+            <tr class="trow" style="border-bottom:1px solid rgba(30,41,59,.5)"><td style="padding:8px 12px 8px 0;color:#9CA3AF;font-family:monospace">4/3/2026 9:45</td><td style="padding:8px 12px 8px 0;color:#d1d5db">Colleges</td><td style="padding:8px 12px 8px 0;color:#fff;font-weight:500">High CO₂ Level</td><td style="padding:8px 12px 8px 0"><span class="badge ba">Warning</span></td><td style="padding:8px 0"><span class="badge ba">Assigned</span></td></tr>
+            <tr class="trow"><td style="padding:8px 12px 8px 0;color:#9CA3AF;font-family:monospace">27/2/2026 13:30</td><td style="padding:8px 12px 8px 0;color:#d1d5db">Campus Lake</td><td style="padding:8px 12px 8px 0;color:#fff;font-weight:500">Low Dissolved Oxygen</td><td style="padding:8px 12px 8px 0"><span class="badge br">Critical</span></td><td style="padding:8px 0"><span class="badge bb">On Route</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;color:#d1d5db">Alert Summary</div>
+      <div style="font-size:11px;color:#6B7280;margin-top:2px">Active (unresolved) · filtered</div>
+      <div style="display:flex;flex-direction:column;gap:16px;margin-top:20px">
+        <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span style="color:#9CA3AF">Critical</span><span style="font-weight:700;color:#EF4444">4</span></div><div style="height:8px;background:#1E293B;border-radius:999px;overflow:hidden"><div style="height:100%;width:57%;background:#EF4444;border-radius:999px"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span style="color:#9CA3AF">Warning</span><span style="font-weight:700;color:#F59E0B">2</span></div><div style="height:8px;background:#1E293B;border-radius:999px;overflow:hidden"><div style="height:100%;width:33%;background:#F59E0B;border-radius:999px"></div></div></div>
+        <div style="border-top:1px solid #1E293B;padding-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+          <div><div style="font-size:18px;font-weight:700;color:#fff">4</div><div style="font-size:10px;color:#6B7280">Assigned</div></div>
+          <div><div style="font-size:18px;font-weight:700;color:#fff">2</div><div style="font-size:10px;color:#6B7280">On Route</div></div>
+          <div><div style="font-size:18px;font-weight:700;color:#fff">6</div><div style="font-size:10px;color:#6B7280">Resolved</div></div>
+        </div>
+        <div style="border-top:1px solid #1E293B;padding-top:12px;display:flex;justify-content:space-between;font-size:11px"><span style="color:#6B7280">Active (unresolved)</span><span style="font-weight:700;color:#fff">6</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 4: Campus Map -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+      <div>
+        <div style="font-size:13px;font-weight:600;color:#d1d5db">UNIMAS Campus — Live Sensor Map</div>
+        <div style="font-size:11px;color:#6B7280;margin-top:2px">Click any marker to see latest sensor readings · Toggle AQI heatmap overlay</div>
+      </div>
+      <button onclick="toggleHeatmap()" id="heatmapBtn" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid #334155;background:rgba(30,41,59,.9);color:#d1d5db;cursor:pointer">🗺 AQI Heatmap OFF</button>
+    </div>
+    <div id="campusMap" style="height:400px;border-radius:10px;overflow:hidden;border:1px solid #1E293B"></div>
+    <div style="display:flex;align-items:center;gap:16px;margin-top:10px">
+      <span style="font-size:10px;color:#6B7280;text-transform:uppercase;letter-spacing:.05em">Status</span>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;border-radius:50%;background:#22C55E"></div><span style="font-size:11px;color:#9CA3AF">Normal</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;border-radius:50%;background:#F59E0B"></div><span style="font-size:11px;color:#9CA3AF">Warning</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;border-radius:50%;background:#EF4444"></div><span style="font-size:11px;color:#9CA3AF">Critical</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ ENERGY TAB ══════ -->
+<div id="tab-energy" class="tab-panel">
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px">
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.05em;font-weight:500">Total Energy</div><div style="font-size:22px;font-weight:700;color:#fff;margin-top:4px">364,484 <span style="font-size:12px;color:#9CA3AF">kWh</span></div><div style="font-size:11px;color:#6B7280">Filtered selection</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.05em;font-weight:500">Peak Power</div><div style="font-size:22px;font-weight:700;color:#fff;margin-top:4px">198 <span style="font-size:12px;color:#9CA3AF">kW</span></div><div style="font-size:11px;color:#6B7280">Highest single reading</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.05em;font-weight:500">Solar Generated</div><div style="font-size:22px;font-weight:700;color:#fff;margin-top:4px">1,018 <span style="font-size:12px;color:#9CA3AF">MWh</span></div><div style="font-size:11px;color:#6B7280">PV generation</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.05em;font-weight:500">Avg Battery</div><div style="font-size:22px;font-weight:700;color:#fff;margin-top:4px">90 <span style="font-size:12px;color:#9CA3AF">%</span></div><div style="font-size:11px;color:#6B7280">Storage level</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.05em;font-weight:500">CO₂ Estimate</div><div style="font-size:22px;font-weight:700;color:#fff;margin-top:4px">213.2 <span style="font-size:12px;color:#9CA3AF">t</span></div><div style="font-size:11px;color:#6B7280">Scope 2 · 0.585 kgCO₂/kWh</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+    <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">Energy by Building</div><div style="font-size:11px;color:#6B7280;margin-top:2px">Total kWh — Q1 2026</div><canvas id="bldgBar" style="margin-top:12px" height="240"></canvas></div>
+    <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">Monthly Energy by Building</div><div style="font-size:11px;color:#6B7280;margin-top:2px">kWh per building — Jan to Mar 2026</div><canvas id="monthlyBldg" style="margin-top:12px" height="240"></canvas></div>
+  </div>
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px">
+    <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">Smart Grid — Solar vs Grid Intake</div><div style="font-size:11px;color:#6B7280;margin-top:2px">Monthly MWh</div><canvas id="gridArea" style="margin-top:12px" height="240"></canvas></div>
+    <div class="card" style="display:flex;flex-direction:column;align-items:center">
+      <div style="width:100%"><div style="font-size:13px;font-weight:600;color:#d1d5db">Battery Level</div><div style="font-size:11px;color:#6B7280;margin-top:2px">Avg 90% — campus storage</div></div>
+      <div style="position:relative;width:190px;height:190px;margin-top:16px">
+        <svg viewBox="0 0 190 190" style="width:100%;height:100%">
+          <circle cx="95" cy="95" r="72" fill="none" stroke="#1E293B" stroke-width="18"/>
+          <circle cx="95" cy="95" r="72" fill="none" stroke="#22C55E" stroke-width="18" stroke-linecap="round" stroke-dasharray="452.4" stroke-dashoffset="45.2" transform="rotate(-90 95 95)" style="transition:stroke-dashoffset .8s ease-out"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none">
+          <span style="font-size:36px;font-weight:900;color:#22C55E;line-height:1">90%</span>
+          <span style="font-size:11px;color:#6B7280;margin-top:4px">Average</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">Grid Efficiency Rate</div><div style="font-size:11px;color:#6B7280;margin-top:2px">Monthly — target ≥ 95%</div><canvas id="gridEff" style="margin-top:12px" height="160"></canvas></div>
+</div>
+
+<!-- ══════ AIR QUALITY TAB ══════ -->
+<div id="tab-air" class="tab-panel">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Avg AQI</div><div style="font-size:22px;font-weight:700;color:#F59E0B;margin-top:4px">78.0</div><div style="font-size:11px;color:#6B7280">Moderate — filtered</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Avg PM2.5</div><div style="font-size:22px;font-weight:700;color:#fff;margin-top:4px">26.9 <span style="font-size:12px;color:#9CA3AF">µg/m³</span></div><div style="font-size:11px;color:#6B7280">Fine particles</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Avg CO₂</div><div style="font-size:22px;font-weight:700;color:#fff;margin-top:4px">670 <span style="font-size:12px;color:#9CA3AF">ppm</span></div><div style="font-size:11px;color:#6B7280">Target &lt; 700 ppm</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Temp / Humid</div><div style="font-size:22px;font-weight:700;color:#fff;margin-top:4px">28.5°C</div><div style="font-size:11px;color:#6B7280">72% RH</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px">
+    <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">AQI Trend by Location</div><div style="font-size:11px;color:#6B7280;margin-top:2px">Monthly average</div><canvas id="aqiTrend" style="margin-top:12px" height="260"></canvas></div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;color:#d1d5db">Status Distribution</div>
+      <div style="font-size:11px;color:#6B7280;margin-top:2px">All filtered readings</div>
+      <canvas id="airStatus" style="margin-top:12px" height="200"></canvas>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px;border-top:1px solid #1E293B;padding-top:12px;text-align:center">
+        <div><div style="font-size:14px;font-weight:700;color:#F59E0B">58%</div><div style="font-size:10px;color:#6B7280">Moderate</div></div>
+        <div><div style="font-size:14px;font-weight:700;color:#22C55E">35%</div><div style="font-size:10px;color:#6B7280">Good</div></div>
+        <div><div style="font-size:14px;font-weight:700;color:#EF4444">7%</div><div style="font-size:10px;color:#6B7280">Unhealthy</div></div>
+      </div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">PM2.5 by Location</div><div style="font-size:11px;color:#6B7280;margin-top:2px">Average µg/m³</div><canvas id="pm25Bar" style="margin-top:12px" height="220"></canvas></div>
+    <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">CO₂ Monthly Trend</div><div style="font-size:11px;color:#6B7280;margin-top:2px">Average ppm — target &lt; 700 ppm</div><canvas id="co2Trend" style="margin-top:12px" height="220"></canvas></div>
+  </div>
+</div>
+
+<!-- ══════ WATER TAB ══════ -->
+<div id="tab-water" class="tab-panel">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Avg pH</div><div style="font-size:22px;font-weight:700;color:#fff;margin-top:4px">7.1</div><div style="font-size:11px;color:#6B7280">Ideal: 6.5 – 8.5</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Turbidity</div><div style="font-size:22px;font-weight:700;color:#fff;margin-top:4px">4.5 <span style="font-size:12px;color:#9CA3AF">NTU</span></div><div style="font-size:11px;color:#6B7280">Lower = clearer</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Dissolved O₂</div><div style="font-size:22px;font-weight:700;color:#fff;margin-top:4px">7.2 <span style="font-size:12px;color:#9CA3AF">mg/L</span></div><div style="font-size:11px;color:#6B7280">Target ≥ 6 mg/L</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Conductivity</div><div style="font-size:22px;font-weight:700;color:#fff;margin-top:4px">285 <span style="font-size:12px;color:#9CA3AF">µS/cm</span></div><div style="font-size:11px;color:#6B7280">Avg across locations</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:16px">
+    <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">Status Distribution</div><div style="font-size:11px;color:#6B7280;margin-top:2px">Filtered readings</div><canvas id="waterStatus" style="margin-top:12px" height="200"></canvas><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;border-top:1px solid #1E293B;padding-top:12px;text-align:center"><div><div style="font-size:18px;font-weight:700;color:#4ade80">68.3%</div><div style="font-size:11px;color:#6B7280">Normal</div></div><div><div style="font-size:18px;font-weight:700;color:#fbbf24">31.7%</div><div style="font-size:11px;color:#6B7280">Warning</div></div></div></div>
+    <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">pH Level Trend</div><div style="font-size:11px;color:#6B7280;margin-top:2px">Monthly average</div><canvas id="phTrend" style="margin-top:12px" height="240"></canvas></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">Turbidity — Monthly</div><div style="font-size:11px;color:#6B7280;margin-top:2px">NTU — lower is better</div><canvas id="turbBar" style="margin-top:12px" height="200"></canvas></div>
+    <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">Dissolved Oxygen — Monthly</div><div style="font-size:11px;color:#6B7280;margin-top:2px">mg/L — target ≥ 6 mg/L</div><canvas id="doTrend" style="margin-top:12px" height="200"></canvas></div>
+  </div>
+</div>
+
+<!-- ══════ WASTE TAB ══════ -->
+<div id="tab-waste" class="tab-panel">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Avg Fill Level</div><div style="font-size:22px;font-weight:700;color:#fff;margin-top:4px">63 <span style="font-size:12px;color:#9CA3AF">%</span></div><div style="font-size:11px;color:#6B7280">Filtered bins</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Full Bins</div><div style="font-size:22px;font-weight:700;color:#f87171;margin-top:4px">51</div><div style="font-size:11px;color:#6B7280">≥ 90% fill level</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Near Full</div><div style="font-size:22px;font-weight:700;color:#fbbf24;margin-top:4px">46</div><div style="font-size:11px;color:#6B7280">70–89% fill</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Avg Bin Temp</div><div style="font-size:22px;font-weight:700;color:#fff;margin-top:4px">32 <span style="font-size:12px;color:#9CA3AF">°C</span></div><div style="font-size:11px;color:#6B7280">Ambient temperature</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px">
+    <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">Avg Fill Level by Location</div><div style="font-size:11px;color:#6B7280;margin-top:2px">% — filtered</div><canvas id="fillBar" style="margin-top:12px" height="220"></canvas></div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;color:#d1d5db">Status Distribution</div>
+      <div style="font-size:11px;color:#6B7280;margin-top:2px">Filtered bins</div>
+      <canvas id="wasteStatus" style="margin-top:12px" height="200"></canvas>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px;border-top:1px solid #1E293B;padding-top:12px;text-align:center">
+        <div><div style="font-size:14px;font-weight:700;color:#F59E0B">28%</div><div style="font-size:10px;color:#6B7280">Near Full</div></div>
+        <div><div style="font-size:14px;font-weight:700;color:#EF4444">19%</div><div style="font-size:10px;color:#6B7280">Full</div></div>
+        <div><div style="font-size:14px;font-weight:700;color:#22C55E">53%</div><div style="font-size:10px;color:#6B7280">OK</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:16px"><div style="font-size:13px;font-weight:600;color:#d1d5db">Top Bins by Fill Level</div><div style="font-size:11px;color:#6B7280;margin-top:2px">Sorted descending</div><canvas id="topBins" style="margin-top:12px" height="220"></canvas></div>
+  <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">Bin Temperature Trend</div><div style="font-size:11px;color:#6B7280;margin-top:2px">°C — elevated = decomposition activity</div><canvas id="binTemp" style="margin-top:12px" height="160"></canvas></div>
+</div>
+
+<!-- ══════ SOIL TAB ══════ -->
+<div id="tab-soil" class="tab-panel">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Avg Moisture</div><div style="font-size:22px;font-weight:700;color:#fff;margin-top:4px">52.3 <span style="font-size:12px;color:#9CA3AF">%</span></div><div style="font-size:11px;color:#6B7280">Filtered locations</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Normal</div><div style="font-size:22px;font-weight:700;color:#4ade80;margin-top:4px">58.6 <span style="font-size:12px;color:#9CA3AF">%</span></div><div style="font-size:11px;color:#6B7280">Healthy moisture level</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Wet</div><div style="font-size:22px;font-weight:700;color:#22d3ee;margin-top:4px">35.5 <span style="font-size:12px;color:#9CA3AF">%</span></div><div style="font-size:11px;color:#6B7280">Over-saturated</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Dry</div><div style="font-size:22px;font-weight:700;color:#f87171;margin-top:4px">5.9 <span style="font-size:12px;color:#9CA3AF">%</span></div><div style="font-size:11px;color:#6B7280">At risk — needs irrigation</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px">
+    <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">Soil Moisture Trend</div><div style="font-size:11px;color:#6B7280;margin-top:2px">% — monthly average by zone</div><canvas id="moistureTrend" style="margin-top:12px" height="260"></canvas></div>
+    <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">Health Status</div><div style="font-size:11px;color:#6B7280;margin-top:2px">Normal · Wet · Dry</div><canvas id="soilHealth" style="margin-top:12px" height="200"></canvas><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px;border-top:1px solid #1E293B;padding-top:12px;text-align:center"><div><div style="font-size:14px;font-weight:700;color:#4ade80">58.6%</div><div style="font-size:10px;color:#6B7280">Normal</div></div><div><div style="font-size:14px;font-weight:700;color:#22d3ee">35.5%</div><div style="font-size:10px;color:#6B7280">Wet</div></div><div><div style="font-size:14px;font-weight:700;color:#f87171">5.9%</div><div style="font-size:10px;color:#6B7280">Dry</div></div></div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">Irrigation Status by Location</div><div style="font-size:11px;color:#6B7280;margin-top:2px">Days per status</div><canvas id="irrigBar" style="margin-top:12px" height="240"></canvas></div>
+    <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">Irrigation Mode Distribution</div><div style="font-size:11px;color:#6B7280;margin-top:2px">Overall — filtered</div><canvas id="irrigPie" style="margin-top:12px" height="200"></canvas></div>
+  </div>
+</div>
+
+<!-- ══════ ALERTS TAB ══════ -->
+<div id="tab-alerts" class="tab-panel">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Total Alerts</div><div style="font-size:22px;font-weight:700;color:#fff;margin-top:4px">12</div><div style="font-size:11px;color:#6B7280">Filtered selection</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Critical</div><div style="font-size:22px;font-weight:700;color:#f87171;margin-top:4px">4</div><div style="font-size:11px;color:#6B7280">Immediate action</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Warning</div><div style="font-size:22px;font-weight:700;color:#fbbf24;margin-top:4px">8</div><div style="font-size:11px;color:#6B7280">Monitoring required</div></div>
+    <div class="kpi"><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:500">Resolved</div><div style="font-size:22px;font-weight:700;color:#4ade80;margin-top:4px">6</div><div style="font-size:11px;color:#6B7280">6 still open</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+    <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">By Severity</div><canvas id="sevPie" style="margin-top:12px" height="190"></canvas></div>
+    <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">By Status</div><canvas id="statusPie" style="margin-top:12px" height="190"></canvas></div>
+    <div class="card"><div style="font-size:13px;font-weight:600;color:#d1d5db">By Location</div><canvas id="locBar" style="margin-top:12px" height="190"></canvas></div>
+  </div>
+  <div class="card" style="margin-bottom:16px"><div style="font-size:13px;font-weight:600;color:#d1d5db">Alerts by Incident Type</div><canvas id="typeBar" style="margin-top:12px" height="160"></canvas></div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px;flex-wrap:wrap">
+      <div><div style="font-size:13px;font-weight:600;color:#d1d5db">Alert Log</div><div id="alertLogSubtitle" style="font-size:11px;color:#6B7280;margin-top:2px">Showing 12 of 12 alerts</div></div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+        <div style="display:flex;align-items:center;gap:4px">
+          <span style="font-size:11px;color:#6B7280">Severity</span>
+          <button class="filter-btn sev-filter active" onclick="setAlertSeverity(this,'All')">All</button>
+          <button class="filter-btn sev-filter" onclick="setAlertSeverity(this,'Critical')">Critical</button>
+          <button class="filter-btn sev-filter" onclick="setAlertSeverity(this,'Warning')">Warning</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px">
+          <span style="font-size:11px;color:#6B7280">Status</span>
+          <button class="filter-btn status-filter active" onclick="setAlertStatus(this,'All')">All</button>
+          <button class="filter-btn status-filter" onclick="setAlertStatus(this,'Resolved')">Resolved</button>
+          <button class="filter-btn status-filter" onclick="setAlertStatus(this,'Assigned')">Assigned</button>
+          <button class="filter-btn status-filter" onclick="setAlertStatus(this,'On Route')">On Route</button>
+        </div>
+        <button onclick="downloadAlerts()" style="display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:8px;font-size:11px;border:1px solid #1E293B;color:#9CA3AF;background:transparent;cursor:pointer">⬇ CSV</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table id="alertTable" style="width:100%;font-size:11px;border-collapse:collapse">
+        <thead><tr style="color:#6B7280;border-bottom:1px solid #1E293B">
+          <th style="text-align:left;padding:8px 12px 8px 0;font-weight:500;cursor:pointer" onclick="sortTable(0)">Timestamp ↕</th>
+          <th style="text-align:left;padding:8px 12px 8px 0;font-weight:500;cursor:pointer" onclick="sortTable(1)">Location ↕</th>
+          <th style="text-align:left;padding:8px 12px 8px 0;font-weight:500;cursor:pointer" onclick="sortTable(2)">Incident Type ↕</th>
+          <th style="text-align:left;padding:8px 12px 8px 0;font-weight:500;cursor:pointer" onclick="sortTable(3)">Severity ↕</th>
+          <th style="text-align:left;padding:8px 0;font-weight:500;cursor:pointer" onclick="sortTable(4)">Status ↕</th>
+        </tr></thead>
+        <tbody id="alertBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- ═══════════════ CHATBOT ═══════════════ -->
+<div id="chatPanel" style="position:fixed;bottom:0;right:0;z-index:60;width:380px;height:100dvh;max-height:100vh;background:#111827;border-left:1px solid #1E293B;border-top:1px solid #1E293B;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease-in-out">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #1E293B;background:#0A0F1E;flex-shrink:0">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:32px;height:32px;border-radius:50%;background:rgba(34,197,94,.2);border:1px solid rgba(34,197,94,.3);display:flex;align-items:center;justify-content:center;font-size:14px">🤖</div>
+      <div><div style="font-size:13px;font-weight:600;color:#fff">ESG Assistant 🤖</div><div style="font-size:10px;color:#4ade80">● Online</div></div>
+    </div>
+    <button onclick="toggleChat()" style="padding:6px;border-radius:8px;color:#9CA3AF;background:transparent;border:none;cursor:pointer;font-size:16px">✕</button>
+  </div>
+  <div id="chatMessages" style="flex:1;overflow-y:auto;padding:12px 12px 8px;scrollbar-width:thin"></div>
+  <div id="quickReplies" style="padding:0 12px 8px;flex-shrink:0">
+    <div style="font-size:10px;color:#4B5563;margin-bottom:6px;padding:0 4px">Quick questions:</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      <button class="qr-btn" onclick="sendMsg('What is our ESG Score?')">What is our ESG Score?</button>
+      <button class="qr-btn" onclick="sendMsg('Is air quality safe?')">Is air quality safe?</button>
+      <button class="qr-btn" onclick="sendMsg('Which building uses most energy?')">Which building uses most energy?</button>
+      <button class="qr-btn" onclick="sendMsg('Any critical alerts?')">Any critical alerts?</button>
+      <button class="qr-btn" onclick="sendMsg('How to improve ESG score?')">How to improve ESG score?</button>
+      <button class="qr-btn" onclick="sendMsg('Soal dalam Bahasa Malaysia')">Soal dalam Bahasa Malaysia</button>
+    </div>
+  </div>
+  <div style="padding:12px;border-top:1px solid #1E293B;flex-shrink:0">
+    <div style="display:flex;align-items:center;gap:8px;background:#0A0F1E;border:1px solid #1E293B;border-radius:12px;padding:8px 12px">
+      <input id="chatInput" type="text" placeholder="Ask about ESG, energy, air quality…" style="flex:1;background:transparent;border:none;outline:none;font-size:11px;color:#fff;font-family:'Inter',sans-serif" onkeydown="if(event.key==='Enter')sendMsg(document.getElementById('chatInput').value)"/>
+      <button onclick="sendMsg(document.getElementById('chatInput').value)" style="padding:6px;border-radius:8px;background:#22C55E;border:none;cursor:pointer;font-size:12px;color:#fff;flex-shrink:0">➤</button>
+    </div>
+    <div style="text-align:center;font-size:9px;color:#374151;margin-top:6px;letter-spacing:.05em">Powered by Gemini AI · URUS AI SDN BHD</div>
+  </div>
+</div>
+
+<!-- Chat toggle button -->
+<button id="chatBtn" onclick="toggleChat()" style="position:fixed;bottom:24px;right:24px;z-index:60;width:56px;height:56px;border-radius:50%;background:#22C55E;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 8px 32px rgba(34,197,94,.3);transition:all .3s">💬</button>
+
+<style>
+.qr-btn{padding:4px 10px;border-radius:999px;font-size:11px;border:1px solid rgba(34,197,94,.3);color:#4ade80;background:transparent;cursor:pointer;white-space:nowrap}
+.qr-btn:hover{background:rgba(34,197,94,.1)}
+.chat-bubble-bot{background:#1E293B;border:1px solid #334155;border-radius:16px;border-top-left-radius:4px;padding:10px 14px;font-size:11px;color:#d1d5db;line-height:1.6;max-width:82%}
+.chat-bubble-user{background:#22C55E;border-radius:16px;border-top-right-radius:4px;padding:10px 14px;font-size:11px;color:#fff;line-height:1.6;max-width:82%}
+</style>
+
+<script>
+// ═══════════════ DATA ═══════════════
+const ALERTS = [
+  {ts:'5/1/2026 10:30',loc:'Admin Block',inc:'Gas Leak',sev:'Critical',status:'Assigned'},
+  {ts:'12/1/2026 14:15',loc:'Engineering Faculty',inc:'High Temp in Bin',sev:'Warning',status:'Resolved'},
+  {ts:'18/1/2026 9:00',loc:'Campus Lake',inc:'Critical pH Level',sev:'Critical',status:'On Route'},
+  {ts:'25/1/2026 16:45',loc:'Colleges',inc:'Power Surge',sev:'Warning',status:'Resolved'},
+  {ts:'6/2/2026 11:20',loc:'Cafeteria',inc:'Waste Bin Full',sev:'Warning',status:'Assigned'},
+  {ts:'14/2/2026 15:05',loc:'Engineering Faculty',inc:'High AQI Reading',sev:'Warning',status:'Resolved'},
+  {ts:'21/2/2026 8:40',loc:'Admin Block',inc:'Energy Spike',sev:'Warning',status:'Resolved'},
+  {ts:'27/2/2026 13:30',loc:'Campus Lake',inc:'Low Dissolved Oxygen',sev:'Critical',status:'On Route'},
+  {ts:'4/3/2026 9:45',loc:'Colleges',inc:'High CO₂ Level',sev:'Warning',status:'Assigned'},
+  {ts:'11/3/2026 10:10',loc:'Main Gate',inc:'Traffic Sensor Offline',sev:'Warning',status:'Resolved'},
+  {ts:'19/3/2026 16:00',loc:'Engineering Faculty',inc:'Critical Energy Load',sev:'Critical',status:'Assigned'},
+  {ts:'26/3/2026 12:25',loc:'Cafeteria',inc:'High Temp in Bin',sev:'Warning',status:'Resolved'},
+];
+
+// ═══════════════ CLOCK ═══════════════
+function tick(){
+  const n=new Date();
+  document.getElementById('hdate').textContent=n.toLocaleDateString('en-MY',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  document.getElementById('htime').textContent=n.toLocaleTimeString('en-MY',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+tick(); setInterval(tick,1000);
+
+// ═══════════════ TABS ═══════════════
+const chartsInit={};
+function switchTab(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    const active=b.dataset.tab===id;
+    b.style.background=active?'rgba(34,197,94,.2)':'transparent';
+    b.style.color=active?'#4ade80':'#9CA3AF';
+    b.style.borderColor=active?'rgba(34,197,94,.3)':'transparent';
+  });
+  if(!chartsInit[id]){chartsInit[id]=true;initCharts(id);}
+  setTimeout(()=>Object.values(Chart.instances||{}).forEach(chart=>chart.resize()),50);
+}
+
+// ═══════════════ FILTERS (visual only) ═══════════════
+function setLoc(el,v){document.querySelectorAll('.pill').forEach(p=>{if(['All','Admin Block','Engineering Faculty','Campus Lake','Cafeteria','Colleges'].includes(p.textContent))p.classList.remove('ab')});el.classList.add('ab');}
+function setMon(el,v){document.querySelectorAll('.pill').forEach(p=>{if(['All','Jan','Feb','Mar'].includes(p.textContent))p.classList.remove('ag')});el.classList.add('ag');}
+
+// ═══════════════ CHART HELPERS ═══════════════
+const TT={backgroundColor:'#1e293b',borderColor:'#334155',borderWidth:1,titleColor:'#f8fafc',bodyColor:'#9ca3af',cornerRadius:8,padding:10};
+const GRID={color:'#1E293B',drawBorder:false};
+const AX=(ticks={})=>({ticks:{color:'#6B7280',font:{size:10},...ticks},grid:GRID,border:{display:false}});
+Chart.defaults.color='#9CA3AF';
+Chart.defaults.font.family="'Inter',sans-serif";
+Chart.defaults.font.size=11;
+Chart.defaults.elements.line.borderWidth=2.5;
+Chart.defaults.elements.line.tension=.35;
+Chart.defaults.elements.point.radius=0;
+Chart.defaults.elements.point.hoverRadius=4;
+
+function lockCanvasHeights(){
+  document.querySelectorAll('canvas[height]').forEach(canvas=>{
+    const h=parseInt(canvas.getAttribute('height'),10);
+    if(Number.isFinite(h)&&h>0){
+      canvas.style.height=`${h}px`;
+      canvas.style.maxHeight=`${h}px`;
+      canvas.style.minHeight=`${h}px`;
+    }
+    canvas.style.width='100%';
+  });
+}
+lockCanvasHeights();
+
+function dashboardLineDatasets(datasets){
+  return datasets.map(ds=>({
+    borderWidth:2.5,
+    tension:.35,
+    pointRadius:0,
+    pointHoverRadius:4,
+    pointHitRadius:14,
+    pointBorderWidth:0,
+    pointBackgroundColor:ds.borderColor,
+    ...ds,
+    pointRadius:0,
+    pointHoverRadius:4,
+    pointHitRadius:14,
+    pointBorderWidth:0,
+  }));
+}
+
+function mkLine(id,labels,datasets,opts={}){
+  return new Chart(document.getElementById(id),{
+    type:'line',
+    data:{labels,datasets:dashboardLineDatasets(datasets)},
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{legend:{labels:{color:'#9CA3AF',font:{size:10},boxWidth:18,boxHeight:2,usePointStyle:false}},tooltip:TT},
+      scales:{x:AX({maxRotation:0}),y:AX()},
+      ...opts
+    }
+  });
+}
+function mkBar(id,labels,datasets,opts={}){
+  return new Chart(document.getElementById(id),{type:'bar',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TT},scales:{x:AX(),y:AX()},...opts}});
+}
+function mkDoughnut(id,labels,data,colors){
+  return new Chart(document.getElementById(id),{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:0,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{color:'#9CA3AF',font:{size:10},padding:10}},tooltip:TT}}});
+}
+
+// ═══════════════ CHART INIT PER TAB ═══════════════
+function initCharts(tab){
+  if(tab==='overview'){
+    // ESG Gauge
+    new Chart(document.getElementById('esgGauge'),{type:'doughnut',data:{labels:['Score','Remaining'],datasets:[{data:[75,25],backgroundColor:['#22C55E','#1e293b'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,circumference:180,rotation:-90,cutout:'68%',plugins:{legend:{display:false},tooltip:{enabled:false}}}});
+    // Radar
+    new Chart(document.getElementById('esgRadar'),{type:'radar',data:{labels:['Energy','Air Quality','Water','Waste Mgmt','Biodiversity'],datasets:[{data:[78,72,70,68,82],borderColor:'#22C55E',backgroundColor:'rgba(34,197,94,.18)',pointBackgroundColor:'#22C55E',pointRadius:4,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TT},scales:{r:{min:0,max:100,ticks:{display:false,stepSize:20},grid:{color:'#1E293B'},angleLines:{color:'#1E293B'},pointLabels:{color:'#9CA3AF',font:{size:11}}}}}});
+    // Energy trend
+    mkLine('energyTrend',['Jan','Feb','Mar'],[
+      {label:'Energy (kWh)',data:[115990,121728,126766],borderColor:'#3B82F6',backgroundColor:'rgba(59,130,246,.25)',fill:true,tension:.4,pointBackgroundColor:'#3B82F6',pointRadius:5,yAxisID:'y'},
+      {label:'Solar (MWh)',data:[324,337,357],borderColor:'#FBBF24',backgroundColor:'rgba(251,191,36,.2)',fill:true,tension:.4,pointBackgroundColor:'#FBBF24',pointRadius:5,yAxisID:'y2'}
+    ],{plugins:{legend:{display:true,labels:{color:'#9CA3AF',font:{size:10}}},tooltip:TT},scales:{x:AX(),y:{...AX(),position:'left'},y2:{...AX(),position:'right',grid:{display:false}}}});
+    // Map
+    initMap();
+  }
+  else if(tab==='energy'){
+    mkBar('bldgBar',['Admin Block','Eng. Faculty','Colleges'],[{data:[117169,124686,122629],backgroundColor:['#3B82F6','#06B6D4','#8B5CF6'],borderRadius:6,borderSkipped:false}]);
+    mkLine('monthlyBldg',['Jan','Feb','Mar'],[
+      {label:'Admin Block',data:[38000,39200,39969],borderColor:'#3B82F6',tension:.4,pointRadius:4,pointBackgroundColor:'#3B82F6'},
+      {label:'Eng. Faculty',data:[40800,41762,42124],borderColor:'#06B6D4',tension:.4,pointRadius:4,pointBackgroundColor:'#06B6D4'},
+      {label:'Colleges',data:[37190,40766,44673],borderColor:'#8B5CF6',tension:.4,pointRadius:4,pointBackgroundColor:'#8B5CF6'}
+    ],{plugins:{legend:{display:true,labels:{color:'#9CA3AF',font:{size:10}}},tooltip:TT}});
+    mkLine('gridArea',['Jan','Feb','Mar'],[
+      {label:'Grid Intake',data:[1040,1086,1128],borderColor:'#3B82F6',backgroundColor:'rgba(59,130,246,.25)',fill:true,tension:.4,pointRadius:5,pointBackgroundColor:'#3B82F6'},
+      {label:'Solar PV',data:[324,337,357],borderColor:'#FBBF24',backgroundColor:'rgba(251,191,36,.2)',fill:true,tension:.4,pointRadius:5,pointBackgroundColor:'#FBBF24'}
+    ],{plugins:{legend:{display:true,labels:{color:'#9CA3AF',font:{size:10}}},tooltip:TT}});
+    mkLine('gridEff',['Jan','Feb','Mar'],[{label:'Efficiency',data:[96.2,96.4,96.6],borderColor:'#22C55E',backgroundColor:'rgba(34,197,94,.15)',fill:true,tension:.4,pointBackgroundColor:'#22C55E',pointRadius:6,datalabels:{display:true}}],{scales:{x:AX(),y:{...AX(),min:94,max:98,ticks:{...AX().ticks,callback:v=>v+'%'}}},plugins:{tooltip:TT,legend:{display:false}}});
+  }
+  else if(tab==='air'){
+    mkLine('aqiTrend',['Jan','Feb','Mar'],[
+      {label:'Eng. Faculty',data:[76,79,86],borderColor:'#06B6D4',tension:.4,pointRadius:4,pointBackgroundColor:'#06B6D4'},
+      {label:'Cafeteria',data:[75,78,84],borderColor:'#22C55E',tension:.4,pointRadius:4,pointBackgroundColor:'#22C55E'},
+      {label:'Admin Block',data:[73,77,82],borderColor:'#F59E0B',tension:.4,pointRadius:4,pointBackgroundColor:'#F59E0B'},
+      {label:'Colleges',data:[72,77,78],borderColor:'#8B5CF6',tension:.4,pointRadius:4,pointBackgroundColor:'#8B5CF6'}
+    ],{plugins:{legend:{display:true,labels:{color:'#9CA3AF',font:{size:10}}},tooltip:TT}});
+    mkDoughnut('airStatus',['Moderate','Good','Unhealthy'],[58,35,7],['#F59E0B','#22C55E','#EF4444']);
+    new Chart(document.getElementById('pm25Bar'),{type:'bar',data:{labels:['Eng. Faculty','Cafeteria','Admin Block','Colleges'],datasets:[{data:[28.5,27.2,25.8,24.1],backgroundColor:'#06B6D4',borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TT},scales:{x:{...AX(),ticks:{...AX().ticks,callback:v=>v+' µg/m³'}},y:AX()}}});
+    mkLine('co2Trend',['Jan','Feb','Mar'],[{label:'CO₂',data:[658,672,681],borderColor:'#8B5CF6',backgroundColor:'rgba(139,92,246,.15)',fill:true,tension:.4,pointRadius:5,pointBackgroundColor:'#8B5CF6'}],{plugins:{tooltip:TT,legend:{display:false}}});
+  }
+  else if(tab==='water'){
+    mkDoughnut('waterStatus',['Normal','Warning'],[68.3,31.7],['#22C55E','#F59E0B']);
+    mkLine('phTrend',['Jan','Feb','Mar'],[{label:'pH',data:[7.3,7.0,7.1],borderColor:'#6366F1',backgroundColor:'rgba(99,102,241,.15)',fill:true,tension:.4,pointRadius:5,pointBackgroundColor:'#6366F1'}],{scales:{x:AX(),y:{...AX(),min:5,max:9,ticks:{...AX().ticks}}},plugins:{tooltip:TT,legend:{display:false}}});
+    mkBar('turbBar',['Jan','Feb','Mar'],[{data:[4.2,4.5,4.8],backgroundColor:'#06B6D4',borderRadius:6,borderSkipped:false}],{scales:{x:AX(),y:{...AX(),ticks:{...AX().ticks,callback:v=>v+' NTU'}}}});
+    mkLine('doTrend',['Jan','Feb','Mar'],[{label:'DO',data:[7.5,7.2,6.9],borderColor:'#22C55E',backgroundColor:'rgba(34,197,94,.15)',fill:true,tension:.4,pointRadius:5,pointBackgroundColor:'#22C55E'}],{scales:{x:AX(),y:{...AX(),min:5,max:10,ticks:{...AX().ticks,callback:v=>v+' mg/L'}}},plugins:{tooltip:TT,legend:{display:false}}});
+  }
+  else if(tab==='waste'){
+    mkBar('fillBar',['Cafeteria','Colleges','Eng. Faculty'],[{data:[65.9,63.9,59.1],backgroundColor:['#F59E0B','#F59E0B','#22C55E'],borderRadius:6,borderSkipped:false}],{scales:{x:AX(),y:{...AX(),min:0,max:100,ticks:{...AX().ticks,callback:v=>v+'%'}}}});
+    mkDoughnut('wasteStatus',['Near Full','Full','OK'],[28,19,53],['#F59E0B','#EF4444','#22C55E']);
+    new Chart(document.getElementById('topBins'),{type:'bar',data:{labels:['BIN-CAF-01','BIN-CAF-02','BIN-COL-01','BIN-CAF-03','BIN-EF-01','BIN-COL-02','BIN-CAF-04','BIN-EF-02'],datasets:[{data:[91,87,83,80,76,74,72,68],backgroundColor:d=>d.raw>=90?'#EF4444':d.raw>=70?'#F59E0B':'#22C55E',borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TT},scales:{x:{...AX(),min:0,max:100,ticks:{...AX().ticks,callback:v=>v+'%'}},y:AX()}}});
+    mkLine('binTemp',['Jan','Feb','Mar'],[{label:'Temp',data:[30.2,32.4,33.8],borderColor:'#F97316',backgroundColor:'rgba(249,115,22,.15)',fill:true,tension:.4,pointRadius:5,pointBackgroundColor:'#F97316'}],{scales:{x:AX(),y:{...AX(),ticks:{...AX().ticks,callback:v=>v+'°C'}}},plugins:{tooltip:TT,legend:{display:false}}});
+  }
+  else if(tab==='soil'){
+    mkLine('moistureTrend',['Jan','Feb','Mar'],[
+      {label:'Zone A',data:[55,52,48],borderColor:'#84CC16',tension:.4,pointRadius:4,pointBackgroundColor:'#84CC16'},
+      {label:'Zone B',data:[48,51,53],borderColor:'#22C55E',tension:.4,pointRadius:4,pointBackgroundColor:'#22C55E'},
+      {label:'Zone C',data:[62,58,56],borderColor:'#06B6D4',tension:.4,pointRadius:4,pointBackgroundColor:'#06B6D4'}
+    ],{plugins:{legend:{display:true,labels:{color:'#9CA3AF',font:{size:10}}},tooltip:TT},scales:{x:AX(),y:{...AX(),min:0,max:100,ticks:{...AX().ticks,callback:v=>v+'%'}}}});
+    mkDoughnut('soilHealth',['Normal','Wet','Dry'],[58.6,35.5,5.9],['#22C55E','#06B6D4','#EF4444']);
+    new Chart(document.getElementById('irrigBar'),{type:'bar',data:{labels:['Zone A','Zone B','Zone C'],datasets:[{label:'Active',data:[28,35,42],backgroundColor:'#3B82F6',borderRadius:0},{label:'Idle',data:[45,52,38],backgroundColor:'#22C55E',borderRadius:0},{label:'Off',data:[17,3,10],backgroundColor:'#374151',borderRadius:[0,0,0,0]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#9CA3AF',font:{size:10}}},tooltip:TT},scales:{x:{...AX(),stacked:true},y:{...AX(),stacked:true}}}});
+    mkDoughnut('irrigPie',['Idle','Active','Off'],[48,35,17],['#22C55E','#3B82F6','#374151']);
+  }
+  else if(tab==='alerts'){
+    mkDoughnut('sevPie',['Warning','Critical'],[8,4],['#F59E0B','#EF4444']);
+    mkDoughnut('statusPie',['Assigned','Resolved','On Route'],[4,6,2],['#F59E0B','#22C55E','#06B6D4']);
+    new Chart(document.getElementById('locBar'),{type:'bar',data:{labels:['Eng. Faculty','Campus Lake','Admin Block','Cafeteria','Colleges','Main Gate'],datasets:[{data:[3,2,2,2,2,1],backgroundColor:'#3B82F6',borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TT},scales:{x:AX(),y:AX({font:{size:9}})}}});
+    mkBar('typeBar',['Gas Leak','High Temp','pH Level','Power Surge','Waste Full','High AQI','Energy Spike','Low DO','CO2 High','Traffic Offline','Critical Load'],[{data:[1,2,1,1,1,1,1,1,1,1,1],backgroundColor:['#EF4444','#F59E0B','#EF4444','#F59E0B','#F59E0B','#F59E0B','#F59E0B','#EF4444','#F59E0B','#F59E0B','#EF4444'],borderRadius:4,borderSkipped:false}],{scales:{x:{...AX({font:{size:9},maxRotation:30})},y:AX()}});
+    renderAlertTable();
+  }
+}
+
+// ═══════════════ MAP ═══════════════
+let map, heatmapLayers=[], heatmapOn=false;
+const LOCS=[
+  {name:'Admin Block',lat:1.4651,lng:110.4272,status:'critical',aqi:null,energy:'117 kW',fill:null},
+  {name:'Engineering Faculty',lat:1.4635,lng:110.4290,status:'warning',aqi:79,'energy':'125 kW',fill:'59%'},
+  {name:'Campus Lake',lat:1.4620,lng:110.4250,status:'critical',aqi:null,energy:null,ph:'7.1'},
+  {name:'Main Gate',lat:1.4680,lng:110.4310,status:'normal',aqi:null,energy:null,fill:null},
+  {name:'Cafeteria',lat:1.4640,lng:110.4265,status:'warning',aqi:75,energy:null,fill:'66%'},
+  {name:'Colleges',lat:1.4610,lng:110.4240,status:'warning',aqi:73,energy:'123 kW',fill:'64%'},
+];
+const SC={'normal':'#22C55E','warning':'#F59E0B','critical':'#EF4444'};
+function initMap(){
+  map=L.map('campusMap',{center:[1.4645,110.4270],zoom:16,zoomControl:true,attributionControl:true,scrollWheelZoom:true});
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap · CARTO',subdomains:'abcd',maxZoom:20}).addTo(map);
+  LOCS.forEach(loc=>{
+    const m=L.circleMarker([loc.lat,loc.lng],{radius:10,fillColor:SC[loc.status],color:'#0A0F1E',weight:2.5,fillOpacity:.92});
+    const rows=[loc.aqi?`<div style="display:flex;justify-content:space-between;padding:2px 0"><span style="color:#9CA3AF;font-size:11px">AQI</span><span style="color:#F59E0B;font-weight:600;font-size:11px">${loc.aqi}</span></div>`:'',
+      loc.energy?`<div style="display:flex;justify-content:space-between;padding:2px 0"><span style="color:#9CA3AF;font-size:11px">Energy</span><span style="color:#f8fafc;font-weight:600;font-size:11px">${loc.energy}</span></div>`:'',
+      loc.fill?`<div style="display:flex;justify-content:space-between;padding:2px 0"><span style="color:#9CA3AF;font-size:11px">Bin Fill</span><span style="color:#F97316;font-weight:600;font-size:11px">${loc.fill}</span></div>`:'',
+      loc.ph?`<div style="display:flex;justify-content:space-between;padding:2px 0"><span style="color:#9CA3AF;font-size:11px">pH</span><span style="color:#6366F1;font-weight:600;font-size:11px">${loc.ph}</span></div>`:'',
+    ].filter(Boolean).join('');
+    const alerts=ALERTS.filter(a=>a.loc===loc.name&&a.status!=='Resolved');
+    const alertHtml=alerts.length?`<div style="background:#450a0a;border-radius:6px;padding:5px 8px;margin-top:4px"><div style="color:#FCA5A5;font-weight:700;font-size:11px">⚠ ${alerts.length} Active Alert${alerts.length>1?'s':''}</div>${alerts.map(a=>`<div style="color:#FCA5A5;font-size:10px">${a.inc} · ${a.sev}</div>`).join('')}</div>`:`<div style="color:#22C55E;font-size:11px">✓ No active alerts</div>`;
+    m.bindPopup(`<div style="min-width:200px;font-family:'Inter',sans-serif;background:#1E293B;color:#F8FAFC;padding:12px;border-radius:8px"><div style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><div style="width:10px;height:10px;border-radius:50%;background:${SC[loc.status]}"></div><span style="font-weight:700;font-size:13px;color:${SC[loc.status]}">${loc.name}</span></div><div style="border-bottom:1px solid #334155;padding-bottom:8px;margin-bottom:8px">${rows}</div>${alertHtml}</div>`,{maxWidth:240});
+    m.addTo(map);
+    if(loc.aqi){const c=L.circle([loc.lat,loc.lng],{radius:loc.aqi*1.4,color:SC[loc.status],fillColor:SC[loc.status],fillOpacity:.18,weight:1,opacity:.5});heatmapLayers.push(c);}
+  });
+}
+function toggleHeatmap(){
+  heatmapOn=!heatmapOn;
+  heatmapLayers.forEach(c=>heatmapOn?c.addTo(map):c.removeFrom(map));
+  document.getElementById('heatmapBtn').textContent=`🗺 AQI Heatmap ${heatmapOn?'ON':'OFF'}`;
+  document.getElementById('heatmapBtn').style.background=heatmapOn?'rgba(245,158,11,.2)':'rgba(30,41,59,.9)';
+  document.getElementById('heatmapBtn').style.color=heatmapOn?'#fbbf24':'#d1d5db';
+}
+
+// ═══════════════ ALERT TABLE ═══════════════
+const SEV_BADGE={'Critical':'<span class="badge br">Critical</span>','Warning':'<span class="badge ba">Warning</span>'};
+const STA_BADGE={'Assigned':'<span class="badge ba">Assigned</span>','On Route':'<span class="badge bb">On Route</span>','Resolved':'<span class="badge bg">Resolved</span>'};
+let sortCol=0,sortAsc=false;
+let alertSevFilter='All',alertStatusFilter='All';
+function filteredAlerts(){
+  return ALERTS.filter(a=>
+    (alertSevFilter==='All'||a.sev===alertSevFilter)&&
+    (alertStatusFilter==='All'||a.status===alertStatusFilter)
+  );
+}
+function setActiveFilter(group,el){
+  document.querySelectorAll(group).forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+function setAlertSeverity(el,value){alertSevFilter=value;setActiveFilter('.sev-filter',el);renderAlertTable();}
+function setAlertStatus(el,value){alertStatusFilter=value;setActiveFilter('.status-filter',el);renderAlertTable();}
+function renderAlertTable(){
+  const tb=document.getElementById('alertBody');
+  if(!tb)return;
+  const rows=filteredAlerts();
+  const subtitle=document.getElementById('alertLogSubtitle');
+  if(subtitle)subtitle.textContent=`Showing ${rows.length} of ${ALERTS.length} alerts`;
+  const sorted=[...rows].sort((a,b)=>{
+    const keys=['ts','loc','inc','sev','status'];
+    const av=a[keys[sortCol]],bv=b[keys[sortCol]];
+    return sortAsc?av.localeCompare(bv):bv.localeCompare(av);
+  });
+  if(!sorted.length){
+    tb.innerHTML='<tr><td colspan="5" style="text-align:center;padding:28px 0;color:#6B7280">No alerts match the selected filters.</td></tr>';
+    return;
+  }
+  tb.innerHTML=sorted.map(a=>`<tr class="trow" style="border-bottom:1px solid rgba(30,41,59,.5)">
+    <td style="padding:8px 12px 8px 0;color:#9CA3AF;font-family:monospace">${a.ts}</td>
+    <td style="padding:8px 12px 8px 0;color:#d1d5db">📍 ${a.loc}</td>
+    <td style="padding:8px 12px 8px 0;color:#fff;font-weight:500">${a.inc}</td>
+    <td style="padding:8px 12px 8px 0">${SEV_BADGE[a.sev]||a.sev}</td>
+    <td style="padding:8px 0">${STA_BADGE[a.status]||a.status}</td>
+  </tr>`).join('');
+}
+function sortTable(col){sortAsc=sortCol===col?!sortAsc:true;sortCol=col;renderAlertTable();}
+function downloadAlerts(){
+  const csv=['Timestamp,Location,Incident_Type,Severity,Status',...filteredAlerts().map(a=>`"${a.ts}","${a.loc}","${a.inc}","${a.sev}","${a.status}"`)].join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='UNIMAS_Alerts.csv';a.click();
+}
+
+// ═══════════════ CHATBOT ═══════════════
+let chatOpen=false,chatInited=false;
+function toggleChat(){
+  chatOpen=!chatOpen;
+  document.getElementById('chatPanel').style.transform=chatOpen?'translateX(0)':'translateX(100%)';
+  document.getElementById('chatBtn').textContent=chatOpen?'✕':'💬';
+  document.getElementById('chatBtn').style.background=chatOpen?'#1E293B':'#22C55E';
+  if(chatOpen&&!chatInited){chatInited=true;addBotMsg(RESPONSES.greeting);}
+}
+
+const RESPONSES={
+  greeting:`👋 Hello! I am your UNIMAS Smart Campus ESG Assistant.\n\nI can help you understand your dashboard data, explain ESG metrics, and suggest improvements.\n\nWhat would you like to know?`,
+  esg:`Our current ESG Score is 75/100.\n\n• Energy Efficiency: 78/100 (Grid eff. 96.4%)\n• Air Quality: 72/100 (AQI 78 – Moderate)\n• Water Quality: 70/100 (68.3% normal)\n• Waste Management: 68/100 (63% fill level)\n• Biodiversity/Soil: 82/100\n\nMain area to improve: increase Solar share from 24.7% → 30% target.`,
+  energy:`Total energy used Q1 2026: 364,484 kWh\n\n🏢 By building:\n• Engineering Faculty: 124,686 kWh (highest)\n• Colleges: 122,629 kWh\n• Admin Block: 117,169 kWh\n\n☀️ Solar share: 24.7% — below 30% target\n⚡ Grid efficiency: 96.4% (good)`,
+  air:`Current average AQI is 78.0 — Moderate.\n\n📊 Monthly trend:\n• January: 74.0 (Good→Moderate)\n• February: 77.8 (Moderate)\n• March: 82.2 (Moderate — rising ⚠️)\n\nRecommendation: Monitor March trend closely. Engineering Faculty shows the highest readings.`,
+  alert:`There are 12 alerts total, 6 active:\n\n🔴 4 active Critical:\n• Gas Leak — Admin Block\n• Critical pH Level — Campus Lake\n• Low Dissolved Oxygen — Campus Lake\n• Critical Energy Load — Engineering Faculty\n\n🟡 2 active Warnings\n\nPlease check the Alert Centre tab for full details.`,
+  water:`Water quality overview (Campus Lake only):\n\n📊 Status: 68.3% Normal, 31.7% Warning\n🧪 pH average: 7.1 (ideal: 6.5–8.5)\n💧 Avg Dissolved Oxygen: 7.2 mg/L\n\n⚠️ 2 critical pH alerts detected at Campus Lake.`,
+  waste:`Waste bin fill levels:\n\n🗑️ By location:\n• Cafeteria: 65.9% full (needs attention)\n• Colleges: 63.9% full\n• Engineering Faculty: 59.1% full\n\n📦 51 bins Full, 46 bins Near Full`,
+  improve:`Top 3 recommendations to improve ESG score:\n\n1. ⚡ Increase solar panel capacity\n   Current: 24.7% → Target: 30%\n   Impact: +3–5 ESG points\n\n2. 💧 Fix water quality at Campus Lake\n   31.7% warning readings detected\n   Impact: +2–4 ESG points\n\n3. ♻️ Increase waste collection at Cafeteria\n   65.9% fill level — highest on campus\n   Impact: +1–2 ESG points`,
+  carbon:`Estimated Carbon Footprint Q1 2026:\n\n🏭 364,484 kWh × 0.585 kgCO₂/kWh ≈ 213 tonnes CO₂\n\nThis is Scope 2 emission (purchased electricity).\n\nTo reduce:\n• Increase solar usage (current gap: 5.3%)\n• Energy-saving measures during peak hours`,
+  bm:`Hai! Saya Pembantu ESG Kampus Pintar UNIMAS. 😊\n\nSaya boleh menjawab soalan anda dalam Bahasa Malaysia.\n\nSila tanya tentang:\n• 📊 Skor ESG kampus\n• 💨 Kualiti udara (AQI)\n• ⚡ Penggunaan tenaga elektrik\n• 💧 Kualiti air tasik\n• 🗑️ Status tong sampah\n• 🚨 Amaran aktif`,
+  fallback:`I can help you with information about:\n⚡ Energy · 💨 Air Quality · 💧 Water\n🗑️ Waste · 🌱 Soil · 🚨 Alerts · 📊 ESG Score\n\nTry asking about any of these topics!`
+};
+
+function getMockReply(msg){
+  const m=msg.toLowerCase();
+  if(m.includes('esg')||m.includes('score')||m.includes('skor'))return RESPONSES.esg;
+  if(m.includes('air')||m.includes('aqi')||m.includes('udara')||m.includes('pm2'))return RESPONSES.air;
+  if(m.includes('energy')||m.includes('tenaga')||m.includes('elektrik')||m.includes('solar')||m.includes('kwh')||m.includes('bangunan')||m.includes('build'))return RESPONSES.energy;
+  if(m.includes('alert')||m.includes('amaran')||m.includes('critical')||m.includes('bahaya'))return RESPONSES.alert;
+  if(m.includes('water')||m.includes('ph')||m.includes('lake')||m.includes('tasik'))return RESPONSES.water;
+  if(m.includes('waste')||m.includes('bin')||m.includes('sampah')||m.includes('fill'))return RESPONSES.waste;
+  if(m.includes('carbon')||m.includes('co2')||m.includes('karbon'))return RESPONSES.carbon;
+  if(m.includes('improv')||m.includes('baik')||m.includes('tingkat')||m.includes('recommend'))return RESPONSES.improve;
+  if(m.includes('bahasa')||m.includes('melayu')||m.includes('bm')||m.includes('soal'))return RESPONSES.bm;
+  return RESPONSES.fallback;
+}
+
+function addBotMsg(text){
+  const div=document.getElementById('chatMessages');
+  const md=text.split('\n').map(line=>{
+    const parts=line.split(/\*\*(.*?)\*\*/g).map((p,j)=>j%2===1?`<strong style="color:#fff">${p}</strong>`:p).join('');
+    const isBullet=/^[•\-\*]\s/.test(line);
+    return `<span style="display:block${isBullet?';padding-left:10px':''}">${isBullet?'• '+parts.slice(2):parts}</span>`;
+  }).join('');
+  div.innerHTML+=`<div style="display:flex;align-items:flex-start;margin-bottom:12px">
+    <div style="width:28px;height:28px;border-radius:50%;background:rgba(34,197,94,.2);border:1px solid rgba(34,197,94,.3);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-right:8px;margin-top:2px">🤖</div>
+    <div class="chat-bubble-bot">${md}</div></div>`;
+  div.scrollTop=div.scrollHeight;
+}
+function addUserMsg(text){
+  const div=document.getElementById('chatMessages');
+  div.innerHTML+=`<div style="display:flex;justify-content:flex-end;margin-bottom:12px"><div class="chat-bubble-user">${text}</div></div>`;
+  div.scrollTop=div.scrollHeight;
+}
+function addTyping(){
+  const div=document.getElementById('chatMessages');
+  div.innerHTML+=`<div id="typing" style="display:flex;align-items:flex-start;margin-bottom:12px">
+    <div style="width:28px;height:28px;border-radius:50%;background:rgba(34,197,94,.2);border:1px solid rgba(34,197,94,.3);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-right:8px">🤖</div>
+    <div class="chat-bubble-bot" style="display:flex;gap:4px;padding:12px 14px">
+      <span style="width:8px;height:8px;border-radius:50%;background:#6B7280;animation:typingDot 1.2s ease-in-out 0s infinite"></span>
+      <span style="width:8px;height:8px;border-radius:50%;background:#6B7280;animation:typingDot 1.2s ease-in-out .2s infinite"></span>
+      <span style="width:8px;height:8px;border-radius:50%;background:#6B7280;animation:typingDot 1.2s ease-in-out .4s infinite"></span>
+    </div></div>`;
+  div.scrollTop=div.scrollHeight;
+}
+async function sendMsg(text){
+  const t=text.trim();if(!t)return;
+  document.getElementById('chatInput').value='';
+  document.getElementById('quickReplies').style.display='none';
+  addUserMsg(t);addTyping();
+  await new Promise(r=>setTimeout(r,900+Math.random()*600));
+  document.getElementById('typing')?.remove();
+  addBotMsg(getMockReply(t));
+}
+
+// ═══════════════ INIT ═══════════════
+chartsInit['overview']=true;
+document.addEventListener('DOMContentLoaded',()=>initCharts('overview'));
+</script>
+</body>
+</html>
+
+

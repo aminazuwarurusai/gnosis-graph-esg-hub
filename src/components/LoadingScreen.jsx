@@ -4,7 +4,7 @@ import config from '../config'
 const LoadingScreen = ({ error }) => (
   <div className="min-h-screen bg-[#0A0F1E] flex flex-col items-center justify-center gap-6">
     {/* Logo / icon */}
-    <div className="bg-white rounded-xl px-4 py-2.5 shadow-lg">
+    <div className="px-4 py-2.5">
       <img
         src={config.university.logo}
         alt={config.university.shortName}

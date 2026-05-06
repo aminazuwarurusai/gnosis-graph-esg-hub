@@ -7,11 +7,13 @@ import {
 import { Droplets, Activity, Waves, FlaskConical } from 'lucide-react'
 import KPICard from '../KPICard'
 import ChartCard from '../ChartCard'
-import { aggregateByDate, aggregateByMonth, countBy, avg, round, fmt, toPieData, filterRows } from '../../utils/dataUtils'
+import { pivotByDate, aggregateByMonth, countBy, avg, round, fmt, toPieData, filterRows } from '../../utils/dataUtils'
 
 const TT = { backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px', fontSize: '12px', color: '#f8fafc' }
 const AX = { fill: '#6B7280', fontSize: 11 }
-const STATUS_COLORS = { Normal: '#22C55E', Warning: '#F59E0B', Critical: '#EF4444' }
+const STATUS_COLORS  = { Normal: '#22C55E', Warning: '#F59E0B', Critical: '#EF4444' }
+const LOC_COLORS     = { 'Campus Lake': '#6366F1', 'Colleges': '#06B6D4' }
+const LOC_COLORS_ARR = ['#6366F1', '#06B6D4', '#22C55E', '#F59E0B']
 
 const Water = ({ data, filters }) => {
   const rows = useMemo(() =>
@@ -25,17 +27,25 @@ const Water = ({ data, filters }) => {
     cond: round(avg(rows.map(r => r.Conductivity).filter(Boolean)), 0),
   }), [rows])
 
+  const locations    = useMemo(() => [...new Set(rows.map(r => r.Location))].sort(), [rows])
   const statusCounts = useMemo(() => countBy(rows, 'Status'), [rows])
   const statusPie    = useMemo(() => toPieData(statusCounts, STATUS_COLORS), [statusCounts])
-  const phTrend      = useMemo(() => aggregateByDate(rows, 'Date', 'pH', 3), [rows])
+  const phTrend      = useMemo(() => pivotByDate(rows, 'Date', 'Location', 'pH', 3), [rows])
   const turbMonth    = useMemo(() => aggregateByMonth(rows, 'Date', 'Turbidity'), [rows])
   const doMonth      = useMemo(() => aggregateByMonth(rows, 'Date', 'DO'), [rows])
-  const condTrend    = useMemo(() => aggregateByDate(rows, 'Date', 'Conductivity', 3), [rows])
+  const condTrend    = useMemo(() => pivotByDate(rows, 'Date', 'Location', 'Conductivity', 3), [rows])
 
   const normalPct = useMemo(() => {
     const n = statusCounts['Normal'] || 0
     return rows.length ? round((n / rows.length) * 100) : 0
   }, [rows, statusCounts])
+
+  const statusStats = useMemo(() =>
+    statusPie.map(s => ({
+      ...s,
+      pct: Math.round((s.value / (rows.length || 1)) * 100),
+    }))
+  , [statusPie, rows.length])
 
   const noData = rows.length === 0
 
@@ -43,7 +53,7 @@ const Water = ({ data, filters }) => {
     <div className="space-y-6 animate-[fadeIn_0.4s_ease-out]">
       {noData && (
         <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3 text-xs text-amber-400">
-          No water data for the selected filter. Water sensors are only at Campus Lake.
+          No water data for the selected filter. Water sensors are at Campus Lake and Colleges.
         </div>
       )}
 
@@ -59,22 +69,46 @@ const Water = ({ data, filters }) => {
       {/* Status donut + pH trend */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <ChartCard title="Status Distribution" subtitle="Filtered readings">
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie data={statusPie} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={4} dataKey="value" strokeWidth={0}>
-                {statusPie.map((e, i) => <Cell key={i} fill={e.fill} />)}
-              </Pie>
-              <Tooltip contentStyle={TT} />
-              <Legend wrapperStyle={{ fontSize: 11, color: '#9CA3AF' }} />
-            </PieChart>
-          </ResponsiveContainer>
-          <div className="mt-3 border-t border-[#1E293B] pt-3 grid grid-cols-2 gap-3 text-center">
-            <div><div className="text-xl font-bold text-emerald-400">{normalPct}%</div><div className="text-xs text-gray-500">Normal</div></div>
-            <div><div className="text-xl font-bold text-amber-400">{100 - normalPct}%</div><div className="text-xs text-gray-500">Warning</div></div>
+          <div className="relative">
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie
+                  data={statusPie}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius="56%"
+                  outerRadius="82%"
+                  paddingAngle={5}
+                  dataKey="value"
+                  strokeWidth={0}
+                >
+                  {statusPie.map((e, i) => <Cell key={i} fill={e.fill} />)}
+                </Pie>
+                <Tooltip contentStyle={TT} formatter={(v, n) => [`${v} readings`, n]} />
+                <Legend
+                  verticalAlign="bottom"
+                  iconType="circle"
+                  wrapperStyle={{ fontSize: 11, color: '#9CA3AF', paddingTop: 8 }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="absolute inset-x-0 top-[70px] flex flex-col items-center pointer-events-none">
+              <span className="text-2xl font-black text-emerald-400 leading-none">{normalPct}%</span>
+              <span className="text-[10px] text-gray-500 mt-1">Normal</span>
+            </div>
+          </div>
+
+          <div className="mt-3 grid grid-cols-2 gap-2 border-t border-[#1E293B] pt-3 text-center">
+            {statusStats.map(s => (
+              <div key={s.name} className="rounded-lg bg-[#0A0F1E] border border-[#1E293B] px-2 py-2">
+                <div className="text-sm font-bold" style={{ color: s.fill }}>{s.pct}%</div>
+                <div className="text-[10px] text-gray-500">{s.name}</div>
+              </div>
+            ))}
           </div>
         </ChartCard>
 
-        <ChartCard title="pH Level Trend" subtitle="Sampled every 3 days" className="md:col-span-2">
+        <ChartCard title="pH Level Trend" subtitle="Sampled every 3 days — per location" className="md:col-span-2">
           <ResponsiveContainer width="100%" height={240}>
             <LineChart data={phTrend} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" vertical={false} />
@@ -82,8 +116,11 @@ const Water = ({ data, filters }) => {
               <YAxis domain={[4, 10]} tick={AX} axisLine={false} tickLine={false} />
               <ReferenceLine y={6.5} stroke="#22C55E" strokeDasharray="3 3" label={{ value:'pH 6.5', fill:'#22C55E', fontSize:9, position:'insideRight' }} />
               <ReferenceLine y={8.5} stroke="#22C55E" strokeDasharray="3 3" label={{ value:'pH 8.5', fill:'#22C55E', fontSize:9, position:'insideRight' }} />
-              <Tooltip contentStyle={TT} formatter={v => [`pH ${v}`, 'pH Level']} />
-              <Line type="monotone" dataKey="value" name="pH" stroke="#6366F1" strokeWidth={2} dot={false} />
+              <Tooltip contentStyle={TT} formatter={(v, n) => [`pH ${v}`, n]} />
+              <Legend wrapperStyle={{ fontSize: 10, color: '#9CA3AF' }} />
+              {locations.map((loc, i) => (
+                <Line key={loc} type="monotone" dataKey={loc} stroke={LOC_COLORS[loc] || LOC_COLORS_ARR[i]} strokeWidth={2} dot={false} />
+              ))}
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -119,14 +156,17 @@ const Water = ({ data, filters }) => {
       </div>
 
       {/* Conductivity */}
-      <ChartCard title="Conductivity Trend" subtitle="µS/cm — sampled every 3 days">
+      <ChartCard title="Conductivity Trend" subtitle="µS/cm — sampled every 3 days — per location">
         <ResponsiveContainer width="100%" height={180}>
           <LineChart data={condTrend} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" vertical={false} />
             <XAxis dataKey="date" tick={{ ...AX, fontSize: 9 }} axisLine={false} tickLine={false} interval={5} />
             <YAxis tick={AX} axisLine={false} tickLine={false} />
-            <Tooltip contentStyle={TT} formatter={v => [`${v} µS/cm`, 'Conductivity']} />
-            <Line type="monotone" dataKey="value" stroke="#8B5CF6" strokeWidth={2} dot={false} />
+            <Tooltip contentStyle={TT} formatter={(v, n) => [`${v} µS/cm`, n]} />
+            <Legend wrapperStyle={{ fontSize: 10, color: '#9CA3AF' }} />
+            {locations.map((loc, i) => (
+              <Line key={loc} type="monotone" dataKey={loc} stroke={LOC_COLORS[loc] || LOC_COLORS_ARR[i]} strokeWidth={2} dot={false} />
+            ))}
           </LineChart>
         </ResponsiveContainer>
       </ChartCard>

@@ -4,7 +4,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer,
 } from 'recharts'
-import { AlertTriangle, CheckCircle, Clock, MapPin, Filter } from 'lucide-react'
+import { AlertTriangle, CheckCircle, Clock, MapPin, Filter, Download, ArrowUpDown } from 'lucide-react'
 import KPICard from '../KPICard'
 import ChartCard from '../ChartCard'
 import StatusBadge from '../StatusBadge'
@@ -18,6 +18,8 @@ const STATUS_COLORS = { Resolved: '#22C55E', Assigned: '#F59E0B', 'On Route': '#
 const AlertCentre = ({ data, filters }) => {
   const [sevFilter,    setSevFilter]    = useState('All')
   const [statusFilter, setStatusFilter] = useState('All')
+  const [sortKey,      setSortKey]      = useState(null)
+  const [sortDir,      setSortDir]      = useState('asc')
 
   // Apply global location+month filter
   const globalFiltered = useMemo(() =>
@@ -25,11 +27,40 @@ const AlertCentre = ({ data, filters }) => {
   , [data.alerts, filters])
 
   // Apply local severity+status filter on top of global
-  const rows = useMemo(() => globalFiltered.filter(r => {
+  const filtered = useMemo(() => globalFiltered.filter(r => {
     const okSev    = sevFilter    === 'All' || r.Severity === sevFilter
     const okStatus = statusFilter === 'All' || r.Status   === statusFilter
     return okSev && okStatus
   }), [globalFiltered, sevFilter, statusFilter])
+
+  // Apply column sort
+  const rows = useMemo(() => {
+    if (!sortKey) return filtered
+    return [...filtered].sort((a, b) => {
+      const av = a[sortKey] ?? ''
+      const bv = b[sortKey] ?? ''
+      const cmp = String(av).localeCompare(String(bv), undefined, { numeric: true })
+      return sortDir === 'asc' ? cmp : -cmp
+    })
+  }, [filtered, sortKey, sortDir])
+
+  const toggleSort = key => {
+    if (sortKey === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
+    else { setSortKey(key); setSortDir('asc') }
+  }
+
+  const downloadCSV = () => {
+    const headers = ['Timestamp', 'Location', 'Incident_Type', 'Severity', 'Status']
+    const csv = [
+      headers.join(','),
+      ...rows.map(r => headers.map(h => `"${(r[h] ?? '').toString().replace(/"/g, '""')}"`).join(','))
+    ].join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url  = URL.createObjectURL(blob)
+    const a    = document.createElement('a')
+    a.href = url; a.download = 'UNIMAS_Alerts.csv'; a.click()
+    URL.revokeObjectURL(url)
+  }
 
   const sevCounts    = useMemo(() => countBy(globalFiltered, 'Severity'),      [globalFiltered])
   const statusCounts = useMemo(() => countBy(globalFiltered, 'Status'),        [globalFiltered])
@@ -123,7 +154,7 @@ const AlertCentre = ({ data, filters }) => {
         title="Alert Log"
         subtitle={`Showing ${rows.length} of ${globalFiltered.length} filtered alerts`}
         action={
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 items-center">
             <div className="flex items-center gap-1">
               <Filter size={11} className="text-gray-500" />
               {['All','Critical','Warning'].map(f => (
@@ -135,6 +166,15 @@ const AlertCentre = ({ data, filters }) => {
                 <FilterBtn key={f} label={f} active={statusFilter === f} onClick={() => setStatusFilter(f)} />
               ))}
             </div>
+            <button
+              onClick={downloadCSV}
+              disabled={rows.length === 0}
+              className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs border border-[#1E293B] text-gray-400 hover:text-gray-200 hover:bg-[#1E293B] disabled:opacity-30 transition-colors"
+              title="Download as CSV"
+            >
+              <Download size={11} />
+              CSV
+            </button>
           </div>
         }
       >
@@ -142,11 +182,27 @@ const AlertCentre = ({ data, filters }) => {
           <table className="w-full text-xs">
             <thead>
               <tr className="text-gray-500 border-b border-[#1E293B]">
-                <th className="text-left py-2 pr-4 font-medium">Timestamp</th>
-                <th className="text-left py-2 pr-4 font-medium">Location</th>
-                <th className="text-left py-2 pr-4 font-medium">Incident Type</th>
-                <th className="text-left py-2 pr-4 font-medium">Severity</th>
-                <th className="text-left py-2 font-medium">Status</th>
+                {[
+                  { label: 'Timestamp',     key: 'Timestamp'     },
+                  { label: 'Location',      key: 'Location'      },
+                  { label: 'Incident Type', key: 'Incident_Type' },
+                  { label: 'Severity',      key: 'Severity'      },
+                  { label: 'Status',        key: 'Status'        },
+                ].map(({ label, key }, i) => (
+                  <th
+                    key={key}
+                    onClick={() => toggleSort(key)}
+                    className={`text-left py-2 font-medium cursor-pointer select-none hover:text-gray-300 transition-colors ${i < 4 ? 'pr-4' : ''}`}
+                  >
+                    <span className="flex items-center gap-1">
+                      {label}
+                      {sortKey === key
+                        ? <span className="text-emerald-400">{sortDir === 'asc' ? '↑' : '↓'}</span>
+                        : <ArrowUpDown size={9} className="text-gray-600" />
+                      }
+                    </span>
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>

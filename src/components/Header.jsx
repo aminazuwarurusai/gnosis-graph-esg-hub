@@ -18,7 +18,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-14">
           {/* Branding */}
           <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 bg-white rounded-lg px-2 py-1">
+            <div className="flex-shrink-0">
               <img
                 src={config.university.logo}
                 alt={`${config.university.shortName} Logo`}
@@ -40,7 +40,7 @@ const Header = () => {
 
             {/* Powered by URUS AI — desktop only */}
             <div className="hidden lg:flex items-center gap-2 pr-2 border-r border-[#1E293B]">
-              <div className="bg-white rounded-md px-1.5 py-0.5 flex-shrink-0">
+              <div className="flex-shrink-0">
                 <img
                   src="/urus-ai-logo.png"
                   alt="URUS AI"

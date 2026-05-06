@@ -81,7 +81,7 @@ This is calculated from:
 • Air Quality: 72/100 (AQI 78 – Moderate)
 • Water Quality: 70/100 (68.3% normal)
 • Waste Management: 68/100 (63% fill level)
-• Biodiversity/Soil: 82/100
+• Soil Health: 82/100
 
 Main area to improve: increase Solar share from 24.7% → 30% target.`,
 

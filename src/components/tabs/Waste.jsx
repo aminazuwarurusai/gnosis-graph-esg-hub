@@ -28,6 +28,15 @@ const Waste = ({ data, filters }) => {
   const statusCounts = useMemo(() => countBy(rows, 'Status'), [rows])
   const statusPie    = useMemo(() => toPieData(statusCounts, STATUS_COLORS), [statusCounts])
   const tempTrend    = useMemo(() => aggregateByDate(rows, 'Date', 'Temp', 3), [rows])
+  const okPct         = useMemo(() =>
+    rows.length ? Math.round(((statusCounts.OK || 0) / rows.length) * 100) : 0
+  , [rows.length, statusCounts])
+  const statusStats   = useMemo(() =>
+    statusPie.map(s => ({
+      ...s,
+      pct: Math.round((s.value / (rows.length || 1)) * 100),
+    }))
+  , [statusPie, rows.length])
 
   const locationFill = useMemo(() =>
     aggregateByLocation(rows, 'Location', 'Fill_Level').map(d => ({
@@ -85,20 +94,40 @@ const Waste = ({ data, filters }) => {
         </ChartCard>
 
         <ChartCard title="Status Distribution" subtitle="Filtered bins">
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie data={statusPie} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={4} dataKey="value" strokeWidth={0}>
-                {statusPie.map((e, i) => <Cell key={i} fill={e.fill} />)}
-              </Pie>
-              <Tooltip contentStyle={TT} />
-              <Legend wrapperStyle={{ fontSize: 11, color: '#9CA3AF' }} />
-            </PieChart>
-          </ResponsiveContainer>
-          <div className="mt-2 space-y-1">
-            {statusPie.map(s => (
-              <div key={s.name} className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full" style={{ background: s.fill }} /><span className="text-gray-400">{s.name}</span></div>
-                <span className="font-bold text-white">{s.value}</span>
+          <div className="relative">
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie
+                  data={statusPie}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius="56%"
+                  outerRadius="82%"
+                  paddingAngle={5}
+                  dataKey="value"
+                  strokeWidth={0}
+                >
+                  {statusPie.map((e, i) => <Cell key={i} fill={e.fill} />)}
+                </Pie>
+                <Tooltip contentStyle={TT} formatter={(v, n) => [`${v} bins`, n]} />
+                <Legend
+                  verticalAlign="bottom"
+                  iconType="circle"
+                  wrapperStyle={{ fontSize: 11, color: '#9CA3AF', paddingTop: 8 }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="absolute inset-x-0 top-[70px] flex flex-col items-center pointer-events-none">
+              <span className="text-2xl font-black text-emerald-400 leading-none">{okPct}%</span>
+              <span className="text-[10px] text-gray-500 mt-1">OK</span>
+            </div>
+          </div>
+
+          <div className="mt-3 grid grid-cols-3 gap-2 border-t border-[#1E293B] pt-3 text-center">
+            {statusStats.map(s => (
+              <div key={s.name} className="rounded-lg bg-[#0A0F1E] border border-[#1E293B] px-2 py-2">
+                <div className="text-sm font-bold" style={{ color: s.fill }}>{s.pct}%</div>
+                <div className="text-[10px] text-gray-500">{s.name}</div>
               </div>
             ))}
           </div>
