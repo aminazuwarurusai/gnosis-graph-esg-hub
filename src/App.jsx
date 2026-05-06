@@ -42,7 +42,7 @@ export default function App() {
         {/* key={} resets tab scroll position on tab switch */}
         <ActiveComponent data={data} filters={filters} key={activeTab} />
       </main>
-      <ChatBot />
+      <ChatBot data={data} filters={filters} />
     </div>
   )
 }

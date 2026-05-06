@@ -1,9 +1,9 @@
-import React, { useState, useMemo } from 'react'
-import { MapContainer, TileLayer, CircleMarker, Popup, Circle } from 'react-leaflet'
+﻿import React, { useState, useMemo } from 'react'
+import { MapContainer, TileLayer, CircleMarker, Popup, Circle, Tooltip as LeafletTooltip } from 'react-leaflet'
 import { Layers } from 'lucide-react'
 import 'leaflet/dist/leaflet.css'
 
-// ─── Campus locations (from Location_Master.csv) ─────────────────────────────
+// â”€â”€â”€ Campus locations (from Location_Master.csv) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const LOCATIONS = [
   { name: 'Admin Block',         lat: 1.4651, lng: 110.4272 },
   { name: 'Engineering Faculty', lat: 1.4635, lng: 110.4290 },
@@ -20,12 +20,43 @@ const STATUS_COLOR = { normal: '#22C55E', warning: '#F59E0B', critical: '#EF4444
 
 const aqiColor  = v => v <= 50 ? '#22C55E' : v <= 100 ? '#F59E0B' : '#EF4444'
 const aqiLabel  = v => v <= 50 ? 'Good' : v <= 100 ? 'Moderate' : v <= 150 ? 'Unhealthy' : 'Hazardous'
+const wasteColor = v => v >= 90 ? '#EF4444' : v >= 70 ? '#F59E0B' : '#22C55E'
+const energyColor = v => v >= 170 ? '#EF4444' : v >= 130 ? '#F59E0B' : '#3B82F6'
 const dotColor  = s => s === 'Normal' || s === 'Good' || s === 'OK' ? '#22C55E'
                     : s === 'Warning' ? '#F59E0B'
                     : s === 'High' || s === 'Critical' ? '#EF4444'
                     : '#6B7280'
 
-// ─── Per-location sensor summary ─────────────────────────────────────────────
+const isRecoveredWasteAlert = (alert, latestWaste) => {
+  const type = String(alert?.Incident_Type || '').toLowerCase()
+  return type.includes('waste') && type.includes('full') && latestWaste?.Status === 'OK'
+}
+
+const OVERLAYS = {
+  aqi: {
+    label: 'AQI',
+    value: loc => loc.aqi,
+    color: aqiColor,
+    radius: value => value * 1.4,
+    display: value => `${value} AQI - ${aqiLabel(value)}`,
+  },
+  waste: {
+    label: 'Waste Fill',
+    value: loc => loc.fillLevel,
+    color: wasteColor,
+    radius: value => 35 + value * 1.2,
+    display: (value, loc) => `${value}% full - ${loc.wasteStatus || 'No status'}`,
+  },
+  energy: {
+    label: 'Energy Load',
+    value: loc => loc.energyKW,
+    color: energyColor,
+    radius: value => 35 + value * 0.9,
+    display: (value, loc) => `${value} kW - ${loc.energyStatus || 'No status'}`,
+  },
+}
+
+// â”€â”€â”€ Per-location sensor summary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function buildLocationData(data) {
   const { air = [], energy = [], water = [], waste = [], soil = [], alerts = [] } = data
 
@@ -45,7 +76,9 @@ function buildLocationData(data) {
 
     // Active (unresolved) alerts for this location
     const activeAlerts = alerts.filter(
-      a => a.Location === loc.name && a.Status !== 'Resolved'
+      a => a.Location === loc.name &&
+        a.Status !== 'Resolved' &&
+        !isRecoveredWasteAlert(a, latestWaste)
     )
     const hasCritical = activeAlerts.some(a => a.Severity === 'Critical')
     const hasWarning  = activeAlerts.length > 0
@@ -83,7 +116,7 @@ function buildLocationData(data) {
   })
 }
 
-// ─── Popup content ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Popup content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const PopupRow = ({ label, value, color }) => value != null ? (
   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '2px 0' }}>
     <span style={{ color: '#9CA3AF', fontSize: 11 }}>{label}</span>
@@ -105,35 +138,36 @@ const LocationPopup = ({ loc }) => (
 
     {/* Sensor rows */}
     <div style={{ display: 'flex', flexDirection: 'column', gap: 1, borderBottom: '1px solid #334155', paddingBottom: 8, marginBottom: 8 }}>
-      <PopupRow label="AQI"        value={loc.aqi      != null ? `${loc.aqi} — ${aqiLabel(loc.aqi)}` : null} color={loc.aqi ? aqiColor(loc.aqi) : null} />
-      <PopupRow label="PM2.5"      value={loc.pm25     != null ? `${loc.pm25} µg/m³` : null} color={dotColor(loc.airStatus)} />
-      <PopupRow label="Energy"     value={loc.energyKW != null ? `${loc.energyKW} kW — ${loc.energyStatus}` : null} color={dotColor(loc.energyStatus)} />
-      <PopupRow label="Water pH"   value={loc.waterPH  != null ? `${loc.waterPH} — ${loc.waterStatus}` : null} color={dotColor(loc.waterStatus)} />
-      <PopupRow label="Bin Fill"   value={loc.fillLevel!= null ? `${loc.fillLevel}% — ${loc.wasteStatus}` : null} color={dotColor(loc.wasteStatus)} />
-      <PopupRow label="Soil"       value={loc.moisture != null ? `${loc.moisture}% — ${loc.soilStatus}` : null} color={dotColor(loc.soilStatus)} />
+      <PopupRow label="AQI"        value={loc.aqi      != null ? `${loc.aqi} - ${aqiLabel(loc.aqi)}` : null} color={loc.aqi ? aqiColor(loc.aqi) : null} />
+      <PopupRow label="PM2.5"      value={loc.pm25     != null ? `${loc.pm25} ug/m3` : null} color={dotColor(loc.airStatus)} />
+      <PopupRow label="Energy"     value={loc.energyKW != null ? `${loc.energyKW} kW - ${loc.energyStatus}` : null} color={dotColor(loc.energyStatus)} />
+      <PopupRow label="Water pH"   value={loc.waterPH  != null ? `${loc.waterPH} - ${loc.waterStatus}` : null} color={dotColor(loc.waterStatus)} />
+      <PopupRow label="Bin Fill"   value={loc.fillLevel!= null ? `${loc.fillLevel}% - ${loc.wasteStatus}` : null} color={dotColor(loc.wasteStatus)} />
+      <PopupRow label="Soil"       value={loc.moisture != null ? `${loc.moisture}% - ${loc.soilStatus}` : null} color={dotColor(loc.soilStatus)} />
     </div>
 
     {/* Alerts */}
     {loc.activeAlerts.length > 0 ? (
       <div style={{ background: '#450a0a', borderRadius: 6, padding: '5px 8px' }}>
-        <div style={{ color: '#FCA5A5', fontWeight: 700, fontSize: 11, marginBottom: 3 }}>⚠ {loc.activeAlerts.length} Active Alert{loc.activeAlerts.length > 1 ? 's' : ''}</div>
+        <div style={{ color: '#FCA5A5', fontWeight: 700, fontSize: 11, marginBottom: 3 }}>Warning: {loc.activeAlerts.length} Active Alert{loc.activeAlerts.length > 1 ? 's' : ''}</div>
         {loc.activeAlerts.map((a, i) => (
           <div key={i} style={{ color: '#FCA5A5', fontSize: 10, lineHeight: 1.5 }}>
-            {a.Incident_Type} · <span style={{ color: a.Severity === 'Critical' ? '#EF4444' : '#F59E0B' }}>{a.Severity}</span> · {a.Status}
+            {a.Incident_Type} - <span style={{ color: a.Severity === 'Critical' ? '#EF4444' : '#F59E0B' }}>{a.Severity}</span> - {a.Status}
           </div>
         ))}
       </div>
     ) : (
-      <div style={{ color: '#22C55E', fontSize: 11 }}>✓ No active alerts</div>
+      <div style={{ color: '#22C55E', fontSize: 11 }}>No active alerts</div>
     )}
   </div>
 )
 
-// ─── Main component ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Main component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const CampusMap = ({ data, filters }) => {
-  const [showHeatmap, setShowHeatmap] = useState(false)
+  const [overlayMode, setOverlayMode] = useState('off')
   const locationData  = useMemo(() => buildLocationData(data), [data])
   const selectedLoc   = filters?.location !== 'All' ? filters?.location : null
+  const activeOverlay = OVERLAYS[overlayMode]
 
   return (
     <div className="relative rounded-xl overflow-hidden border border-[#1E293B]" style={{ height: 420 }}>
@@ -145,7 +179,7 @@ const CampusMap = ({ data, filters }) => {
         attributionControl={true}
         scrollWheelZoom={true}
       >
-        {/* Dark CartoDB tiles — no API key needed */}
+        {/* Dark CartoDB tiles â€” no API key needed */}
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank">CARTO</a>'
@@ -153,22 +187,32 @@ const CampusMap = ({ data, filters }) => {
           maxZoom={20}
         />
 
-        {/* AQI heatmap — translucent circles sized to AQI radius */}
-        {showHeatmap && locationData.map(loc =>
-          loc.aqi != null && (
+        {/* Metric overlay circles sized to the selected value */}
+        {activeOverlay && locationData.map(loc => {
+          const value = activeOverlay.value(loc)
+          return value != null && (
             <Circle
-              key={`heat-${loc.name}`}
+              key={`${overlayMode}-${loc.name}`}
               center={[loc.lat, loc.lng]}
-              radius={loc.aqi * 1.4}
+              radius={activeOverlay.radius(value)}
               pathOptions={{
-                color: aqiColor(loc.aqi), fillColor: aqiColor(loc.aqi),
+                color: activeOverlay.color(value),
+                fillColor: activeOverlay.color(value),
                 fillOpacity: 0.18, weight: 1, opacity: 0.5,
               }}
-            />
+              interactive={true}
+            >
+              <LeafletTooltip sticky direction="top" opacity={0.95}>
+                <div style={{ minWidth: 130 }}>
+                  <div style={{ fontWeight: 700, color: activeOverlay.color(value), marginBottom: 2 }}>{loc.name}</div>
+                  <div>{activeOverlay.label}: {activeOverlay.display(value, loc)}</div>
+                </div>
+              </LeafletTooltip>
+            </Circle>
           )
-        )}
+        })}
 
-        {/* Selection ring — pulsing outer circle around the selected location */}
+        {/* Selection ring â€” pulsing outer circle around the selected location */}
         {selectedLoc && locationData.filter(l => l.name === selectedLoc).map(loc => (
           <Circle
             key={`sel-${loc.name}`}
@@ -217,23 +261,41 @@ const CampusMap = ({ data, filters }) => {
         </div>
       )}
 
-      {/* Heatmap toggle button */}
-      <button
-        onClick={() => setShowHeatmap(v => !v)}
-        className={`absolute top-3 right-3 z-[1000] flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all shadow-lg ${
-          showHeatmap
-            ? 'bg-amber-500/30 text-amber-300 border-amber-500/50'
-            : 'bg-[#1e293b]/90 text-gray-300 border-[#334155] hover:bg-[#334155]'
-        }`}
-      >
-        <Layers size={12} />
-        AQI Heatmap {showHeatmap ? 'ON' : 'OFF'}
-      </button>
+      {/* Metric overlay selector */}
+      <div className="absolute top-3 right-3 z-[1000] flex items-center gap-1 rounded-lg border border-[#334155] bg-[#1e293b]/90 p-1 shadow-lg backdrop-blur">
+        <Layers size={12} className="ml-1 text-gray-500" />
+        {[
+          ['off', 'Off'],
+          ['aqi', 'AQI'],
+          ['waste', 'Waste'],
+          ['energy', 'Energy'],
+        ].map(([mode, label]) => {
+          const active = overlayMode === mode
+          return (
+            <button
+              key={mode}
+              onClick={() => setOverlayMode(mode)}
+              className={`px-2 py-1 rounded-md text-[11px] font-semibold transition-all ${
+                active
+                  ? 'bg-amber-500/25 text-amber-300'
+                  : 'text-gray-400 hover:bg-[#334155] hover:text-gray-200'
+              }`}
+            >
+              {label}
+            </button>
+          )
+        })}
+      </div>
 
       {/* Legend */}
       <div className="absolute bottom-7 left-3 z-[1000] bg-[#1e293b]/90 backdrop-blur border border-[#334155] rounded-lg px-3 py-2 flex items-center gap-4 shadow-lg">
-        <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Status</span>
-        {[['#22C55E','Normal'],['#F59E0B','Warning'],['#EF4444','Critical']].map(([c,l]) => (
+        <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">
+          {activeOverlay ? activeOverlay.label : 'Status'}
+        </span>
+        {(overlayMode === 'energy'
+          ? [['#3B82F6','Low'],['#F59E0B','Medium'],['#EF4444','High']]
+          : [['#22C55E','Normal'],['#F59E0B','Warning'],['#EF4444','Critical']]
+        ).map(([c,l]) => (
           <div key={l} className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded-full border-2 border-[#0A0F1E]" style={{ background: c }} />
             <span className="text-xs text-gray-400">{l}</span>
@@ -245,3 +307,6 @@ const CampusMap = ({ data, filters }) => {
 }
 
 export default CampusMap
+
+
+
