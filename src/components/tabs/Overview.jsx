@@ -16,11 +16,11 @@ import {
 } from '../../utils/dataUtils'
 
 const RADAR_DATA = [
-  { subject: 'Energy',       score: config.esgScore.energy },
-  { subject: 'Air Quality',  score: config.esgScore.air    },
-  { subject: 'Water',        score: config.esgScore.water  },
-  { subject: 'Waste Mgmt',   score: config.esgScore.waste  },
-  { subject: 'Soil Health',  score: config.esgScore.soil   },
+  { subject: 'Energy',      score: config.esgScore.energy, color: '#3B82F6' },
+  { subject: 'Air Quality', score: config.esgScore.air,    color: '#06B6D4' },
+  { subject: 'Water',       score: config.esgScore.water,  color: '#6366F1' },
+  { subject: 'Waste Mgmt',  score: config.esgScore.waste,  color: '#F97316' },
+  { subject: 'Soil Health', score: config.esgScore.soil,   color: '#22C55E' },
 ]
 
 const TT = { backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px', fontSize: '12px', color: '#f8fafc' }
@@ -241,25 +241,22 @@ const Overview = ({ data, filters }) => {
 
           {/* Dimension breakdown — mini progress bars */}
           <div className="space-y-2 mt-2">
-            {RADAR_DATA.map(d => {
-              const barColor = d.score >= 80 ? '#22C55E' : d.score >= 60 ? '#F59E0B' : '#EF4444'
-              return (
-                <div key={d.subject} className="flex items-center gap-2">
-                  <div className="w-14 text-[10px] text-gray-500 text-right truncate flex-shrink-0">
-                    {d.subject.split(' ')[0]}
-                  </div>
-                  <div className="flex-1 h-1.5 bg-[#1E293B] rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full"
-                      style={{ width: `${d.score}%`, backgroundColor: barColor, transition: 'width 0.8s ease-out' }}
-                    />
-                  </div>
-                  <div className="text-[11px] font-bold w-6 text-right flex-shrink-0" style={{ color: barColor }}>
-                    {d.score}
-                  </div>
+            {RADAR_DATA.map(d => (
+              <div key={d.subject} className="flex items-center gap-2">
+                <div className="w-14 text-[10px] text-gray-500 text-right truncate flex-shrink-0">
+                  {d.subject.split(' ')[0]}
                 </div>
-              )
-            })}
+                <div className="flex-1 h-1.5 bg-[#1E293B] rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full"
+                    style={{ width: `${d.score}%`, backgroundColor: d.color, transition: 'width 0.8s ease-out' }}
+                  />
+                </div>
+                <div className="text-[11px] font-bold w-6 text-right flex-shrink-0" style={{ color: d.color }}>
+                  {d.score}
+                </div>
+              </div>
+            ))}
           </div>
         </ChartCard>
 
