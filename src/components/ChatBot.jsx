@@ -460,7 +460,7 @@ const ChatBot = ({ data, filters }) => {
       reply = await callGemini(trimmed, messages, buildDashboardContext(data, filters))
     } catch (err) {
       console.error('[Gemini error]', err?.message || err)
-      reply = `Gemini error: ${err?.message}\n\nLocal response:\n${getMockResponse(trimmed)}`
+      reply = `I'm having trouble reaching the AI service right now.\n\nLocal response:\n${getMockResponse(trimmed)}`
     }
 
     setIsTyping(false)
