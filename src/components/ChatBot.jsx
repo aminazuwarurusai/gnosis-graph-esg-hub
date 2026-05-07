@@ -3,28 +3,7 @@ import { MessageCircle, X, Send, Bot } from 'lucide-react'
 import config from '../config'
 import { avg, countBy, filterAlerts, filterRows, fmt, round } from '../utils/dataUtils'
 
-// â”€â”€â”€ Gemini REST API (v1 â€” supports gemini-2.5-flash) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-const GEMINI_KEY = import.meta.env.VITE_GEMINI_API_KEY
-// Try the rolling latest Flash alias first, then stable fallbacks.
-const MODELS = [
-  'gemini-flash-latest',
-  'gemini-2.5-flash',
-  'gemini-2.5-flash-lite',
-]
-const geminiUrl = m => `https://generativelanguage.googleapis.com/v1/models/${m}:generateContent?key=${GEMINI_KEY}`
-
-const SYSTEM_TEXT = `You are an ESG assistant for UNIMAS Smart Campus ISuRE dashboard. Powered by URUS AI SDN BHD.
-
-UNIMAS campus data Q1 2026:
-- ESG Score: 75/100 (Energy:78, Air:72, Water:70, Waste:68, Soil:82)
-- Energy: 364,484 kWh | Engineering Faculty 124,686 kWh (HIGHEST) | Colleges 122,629 | Admin Block 117,169 | Solar 24.7% (target 30%) | Grid eff 96.4%
-- Air: AQI 78.0 Moderate avg | Jan 74.0 Feb 77.8 Mar 82.2 rising | Locations: Eng Faculty, Colleges, Admin, Cafeteria
-- Water: Campus Lake only | 68.3% Normal 31.7% Warning | pH 6.2-8.4 | DO 7.2mg/L | 2 critical alerts
-- Waste: 63% avg fill | Cafeteria 65.9% (highest) | Colleges 63.9% | Eng Faculty 59.1%
-- Soil: Eng Faculty only | 58.6% Normal 35.5% Wet 5.9% Dry
-- Alerts: 12 active (4 Critical: Gas Leak-Admin, pH-Lake, Power Surge-Colleges, Low DO-Lake | 8 Warning)
-
-Rules: Answer concisely max 120 words. Reply in same language as user. Always use the data above.`
+const CHAT_API_URL = import.meta.env.VITE_CHAT_API_URL || '/api/chat'
 
 
 const topBy = (rows, key, valueKey, mode = 'sum') => {
@@ -159,48 +138,25 @@ ${mapContext || 'No campus map marker data available.'}
 
 Rules: Answer concisely, max 120 words. Reply in the same language as the user. Do not invent data outside this summary.`
 }
-async function callGemini(userMsg, chatHistory, dashboardContext) {
-  const contents = [
-    { role: 'user',  parts: [{ text: dashboardContext }] },
-    { role: 'model', parts: [{ text: 'Understood. I am your UNIMAS ESG Assistant.' }] },
-    ...chatHistory.slice(-6).map(m => ({
-      role: m.role === 'bot' ? 'model' : 'user',
-      parts: [{ text: m.text }],
-    })),
-    { role: 'user', parts: [{ text: userMsg }] },
-  ]
-
-  const body = JSON.stringify({
-    contents,
-    generationConfig: { maxOutputTokens: 400, temperature: 0.7 },
-  })
-
-  // Try each model in order; retry once on overload
-  for (const model of MODELS) {
-    for (let attempt = 0; attempt < 2; attempt++) {
-      if (attempt > 0) await new Promise(r => setTimeout(r, 2000)) // wait 2s before retry
-
-      const res = await fetch(geminiUrl(model), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body,
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-        return data.candidates?.[0]?.content?.parts?.[0]?.text ?? 'No response.'
-      }
-
-      const err = await res.json()
-      const msg = err?.error?.message ?? `HTTP ${res.status}`
-      const isOverload = msg.toLowerCase().includes('demand') || res.status === 503 || res.status === 429
-      const isModelUnavailable = res.status === 404 || msg.toLowerCase().includes('not found') || msg.toLowerCase().includes('not supported')
-      if (isModelUnavailable) break // try the next model name in the list
-      if (!isOverload) throw new Error(msg) // hard error, do not retry
-      // overloaded â€” loop to retry / next model
-    }
+async function callBackendChat(userMsg, chatHistory, dashboardContext) {
+  const history = chatHistory.slice(-6).map(msg => ({
+    role: msg.role === 'bot' ? 'assistant' : 'user',
+    text: msg.text,
+  }))
+  const payload = {
+    message: userMsg,
+    history,
+    dashboardContext,
   }
-  throw new Error('All models busy. Please try again in a moment.')
+  const res = await fetch(CHAT_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (!res.ok) throw new Error(`Chat API failed (${res.status})`)
+  const data = await res.json()
+  if (!data?.reply) throw new Error('Chat API returned empty reply')
+  return data.reply
 }
 
 // â”€â”€â”€ Mock response fallback (used if Gemini API fails) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -442,7 +398,7 @@ const ChatBot = ({ data, filters }) => {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 300)
     }
-  }, [isOpen])
+  }, [isOpen, hasOpened])
 
   const sendMessage = async (text) => {
     const trimmed = text.trim()
@@ -457,10 +413,10 @@ const ChatBot = ({ data, filters }) => {
 
     let reply
     try {
-      reply = await callGemini(trimmed, messages, buildDashboardContext(data, filters))
+      reply = await callBackendChat(trimmed, messages, buildDashboardContext(data, filters))
     } catch (err) {
-      console.error('[Gemini error]', err?.message || err)
-      reply = `I'm having trouble reaching the AI service right now.\n\nLocal response:\n${getMockResponse(trimmed)}`
+      console.error('[Chat API error]', err?.message || err)
+      reply = `I'm having trouble reaching the chat service right now.\n\nLocal response:\n${getMockResponse(trimmed)}`
     }
 
     setIsTyping(false)

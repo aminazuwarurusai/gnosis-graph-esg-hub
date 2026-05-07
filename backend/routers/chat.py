@@ -6,6 +6,7 @@ Powered by URUS AI SDN BHD
 from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import List, Optional
+import os
 
 router = APIRouter()
 
@@ -45,6 +46,7 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     history: Optional[List[ChatMessage]] = []
+    dashboardContext: Optional[str] = None
 
 
 class ChatResponse(BaseModel):
@@ -92,13 +94,21 @@ MOCK_RESPONSES = {
         "2. Fix Campus Lake water quality (31.7% warning)\n"
         "3. Increase waste collection at Cafeteria (65.9% fill)"
     ),
+    "score_method": (
+        "Energy score 78 is a configured weighted score in the dashboard model.\n"
+        "Main factors: grid efficiency, solar share versus 30% target, building consumption, and estimated emissions.\n"
+        "In current data, strong grid efficiency supports the score, while solar share below target reduces it."
+    ),
 }
 
 
 def mock_response(message: str) -> str:
     m = message.lower()
+    if any(k in m for k in ["macam mana", "bagaimana", "how", "dapat", "kira", "calculate", "formula", "weight", "berat"]):
+        if "78" in m or any(k in m for k in ["energy", "tenaga", "score", "skor", "esg"]):
+            return MOCK_RESPONSES["score_method"]
     if any(k in m for k in ["esg", "score", "skor"]):
-        return MOCK_RESPONSES["air"]
+        return MOCK_RESPONSES["esg"]
     if any(k in m for k in ["aqi", "air quality", "udara"]):
         return MOCK_RESPONSES["air"]
     if any(k in m for k in ["energy", "tenaga", "elektrik", "power", "solar"]):
@@ -119,6 +129,46 @@ def mock_response(message: str) -> str:
     )
 
 
+def gemini_response(request: ChatRequest) -> Optional[str]:
+    """
+    Secure server-side Gemini call using google-genai SDK.
+    Returns None when API key is unavailable so caller falls back to mock.
+    """
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        return None
+
+    try:
+        from google import genai
+        from google.genai import types
+    except Exception:
+        return None
+
+    try:
+        client = genai.Client(api_key=api_key)
+
+        prompt = request.dashboardContext or (
+            "You are an ESG assistant for UNIMAS Smart Campus. "
+            "Reply concisely in the same language as the user."
+        )
+        history_text = "\n".join(
+            [f"{msg.role}: {msg.text}" for msg in (request.history or [])[-6:]]
+        )
+        full_prompt = (
+            f"{prompt}\n\nConversation:\n{history_text}\n"
+            f"user: {request.message}\nassistant:"
+        )
+
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=full_prompt,
+            config=types.GenerateContentConfig(max_output_tokens=400, temperature=0.7),
+        )
+        return (response.text or "").strip() or None
+    except Exception:
+        return None
+
+
 @router.post("/api/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest) -> ChatResponse:
     """
@@ -126,8 +176,9 @@ async def chat(request: ChatRequest) -> ChatResponse:
     Replace mock_response() with Gemini API when API key is available.
     """
 
-    # ── MOCK (active now) ──────────────────────────────────────────────────
-    reply = mock_response(request.message)
+    reply = gemini_response(request)
+    if not reply:
+        reply = mock_response(request.message)
 
     # ── GEMINI API (uncomment when ready) ─────────────────────────────────
     # history_formatted = [
