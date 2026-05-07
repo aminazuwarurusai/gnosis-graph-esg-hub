@@ -16,6 +16,24 @@ npm run dev
 
 Opens at **http://localhost:3000**
 
+## Backend Chat API (optional but recommended)
+
+The chatbot now calls a backend endpoint (`/api/chat`) so API keys are not exposed in frontend code.
+
+1. Install Python dependencies:
+   - `pip install -r backend/requirements.txt`
+2. Set backend environment variable:
+   - Copy `.env.example` → `.env`, then set `GEMINI_API_KEY=your_key_here`
+3. Start FastAPI server:
+   - `uvicorn backend.main:app --reload --port 8000`
+4. Keep frontend running with `npm run dev` (Vite proxies `/api/*` to `localhost:8000`).
+
+Available backend endpoints:
+- `POST /api/chat`
+- `GET /api/health`
+
+If backend or Gemini is unavailable, chatbot automatically falls back to local mock responses.
+
 ---
 
 ## Project Structure
@@ -71,6 +89,8 @@ dashboard/
 ```bash
 npm run build     # outputs to dist/
 npm run preview   # preview the production build locally
+npm run lint      # run frontend lint checks
+npm run test      # placeholder test command
 ```
 
 ---
