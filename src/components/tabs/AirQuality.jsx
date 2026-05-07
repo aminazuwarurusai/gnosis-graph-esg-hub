@@ -59,9 +59,12 @@ const AirQuality = ({ data, filters }) => {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <KPICard title="Avg AQI"    value={kpiAvgs.aqi  || '—'} subtitle={kpiAvgs.aqi ? aqiLabel(kpiAvgs.aqi) : 'No data'} color={aqiColor(kpiAvgs.aqi || 0)} icon={Wind} />
-        <KPICard title="Avg PM2.5"  value={kpiAvgs.pm25 || '—'} unit="µg/m³" subtitle="Fine particles"       color="#F59E0B" icon={AlertCircle} />
-        <KPICard title="Avg CO₂"    value={kpiAvgs.co2  || '—'} unit="ppm"   subtitle="Target < 700 ppm"     color="#FB923C" icon={Wind} />
+        <KPICard title="Avg AQI"   value={kpiAvgs.aqi  || '—'} subtitle={kpiAvgs.aqi ? aqiLabel(kpiAvgs.aqi) : 'No data'} color={aqiColor(kpiAvgs.aqi || 0)} icon={Wind}
+          valueColor={kpiAvgs.aqi != null ? (kpiAvgs.aqi <= 50 ? undefined : kpiAvgs.aqi <= 100 ? '#F59E0B' : '#EF4444') : undefined} />
+        <KPICard title="Avg PM2.5" value={kpiAvgs.pm25 || '—'} unit="µg/m³" subtitle="Fine particles · WHO ≤12" color="#F59E0B" icon={AlertCircle}
+          valueColor={kpiAvgs.pm25 != null ? (kpiAvgs.pm25 <= 12 ? undefined : kpiAvgs.pm25 <= 35 ? '#F59E0B' : '#EF4444') : undefined} />
+        <KPICard title="Avg CO₂"   value={kpiAvgs.co2  || '—'} unit="ppm"   subtitle="Target < 700 ppm"       color="#FB923C" icon={Wind}
+          valueColor={kpiAvgs.co2 != null ? (kpiAvgs.co2 < 700 ? undefined : kpiAvgs.co2 <= 1000 ? '#F59E0B' : '#EF4444') : undefined} />
         <KPICard title="Temp / Humid" value={kpiAvgs.temp ? `${kpiAvgs.temp}°C` : '—'} subtitle={kpiAvgs.humid ? `${kpiAvgs.humid}% RH` : ''} color="#06B6D4" icon={Thermometer} />
       </div>
 
