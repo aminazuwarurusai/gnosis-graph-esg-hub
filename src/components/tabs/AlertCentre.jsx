@@ -94,8 +94,10 @@ const AlertCentre = ({ data, filters }) => {
         <KPICard title="Total Alerts" value={globalFiltered.length} subtitle="Filtered selection" icon={AlertTriangle}
           color={globalFiltered.length === 0 ? '#6B7280' : sevCounts.Critical > 0 ? '#EF4444' : '#F59E0B'}
           valueColor={globalFiltered.length === 0 ? undefined : sevCounts.Critical > 0 ? '#EF4444' : '#F59E0B'} />
-        <KPICard title="Critical"  value={sevCounts.Critical    || 0} subtitle="Immediate action"    color="#EF4444" icon={AlertTriangle} />
-        <KPICard title="Warning"   value={sevCounts.Warning     || 0} subtitle="Monitoring required" color="#F59E0B" icon={Clock} />
+        <KPICard title="Critical"  value={sevCounts.Critical || 0} subtitle="Immediate action"    color="#EF4444" icon={AlertTriangle}
+          valueColor={sevCounts.Critical > 0 ? '#EF4444' : undefined} />
+        <KPICard title="Warning"   value={sevCounts.Warning  || 0} subtitle="Monitoring required" color="#F59E0B" icon={Clock}
+          valueColor={sevCounts.Warning > 0 ? '#F59E0B' : undefined} />
         <KPICard title="Resolved"  value={statusCounts.Resolved || 0} subtitle={`${globalFiltered.length - (statusCounts.Resolved||0)} still open`} color="#22C55E" icon={CheckCircle} />
       </div>
 
