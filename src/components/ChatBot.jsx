@@ -109,7 +109,7 @@ function buildDashboardContext(data, filters) {
     .map(alert => `${alert.Timestamp} ${alert.Location} ${alert.Incident_Type} (${alert.Severity}, ${alert.Status})`)
   const mapContext = buildMapContext(data)
 
-  return `You are an ESG assistant for ${config.university.shortName} ${config.dashboard.title}. Powered by URUS AI SDN BHD.
+  return `You are Dayang, an ESG assistant for ${config.university.shortName} ${config.dashboard.title}. Powered by URUS AI SDN BHD. Your name is Dayang.
 
 Use ONLY the current dashboard data summary below. If data is missing for the selected filter, say that the current dashboard selection has no data for that metric.
 Current dashboard filters: ${activeFilters}
@@ -162,7 +162,7 @@ async function callBackendChat(userMsg, chatHistory, dashboardContext) {
 // â”€â”€â”€ Mock response fallback (used if Gemini API fails) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const RESPONSES = {
-  greeting: `Hello! I am your UNIMAS Smart Campus ESG Assistant.
+  greeting: `Hello! I am Dayang, your UNIMAS Smart Campus ESG Assistant.
 
 I can help you understand your dashboard data, explain ESG metrics, and suggest improvements.
 
@@ -443,7 +443,7 @@ const ChatBot = ({ data, filters }) => {
               <Bot size={15} className="text-emerald-400" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-white">ESG Assistant</p>
+              <p className="text-sm font-semibold text-white">Dayang</p>
               <p className="text-[10px] text-emerald-400"><span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1" />Online</p>
             </div>
           </div>
@@ -500,7 +500,7 @@ const ChatBot = ({ data, filters }) => {
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKey}
-              placeholder="Ask about ESG, energy, air quality..."
+              placeholder="Tanya Dayang tentang ESG, tenaga, kualiti udara..."
               className="flex-1 bg-transparent text-xs text-white placeholder-gray-600 outline-none"
               disabled={isTyping}
             />
@@ -515,7 +515,7 @@ const ChatBot = ({ data, filters }) => {
 
           {/* Footer */}
           <p className="text-center text-[9px] text-gray-700 mt-2 tracking-wide">
-            Powered by Gemini AI | URUS AI SDN BHD
+            Dayang · Powered by Gemini AI | URUS AI SDN BHD
           </p>
         </div>
       </div>
@@ -528,7 +528,7 @@ const ChatBot = ({ data, filters }) => {
             ? 'pointer-events-none opacity-0 scale-75'
             : 'bg-emerald-500 hover:bg-emerald-400 scale-100 hover:scale-105'
         }`}
-        aria-label="Toggle ESG Assistant"
+        aria-label="Toggle Dayang"
       >
         {isOpen
           ? <X size={20} className="text-gray-300" />

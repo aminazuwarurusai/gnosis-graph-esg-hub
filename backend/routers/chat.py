@@ -148,8 +148,8 @@ def gemini_response(request: ChatRequest) -> Optional[str]:
         client = genai.Client(api_key=api_key)
 
         prompt = request.dashboardContext or (
-            "You are an ESG assistant for UNIMAS Smart Campus. "
-            "Reply concisely in the same language as the user."
+            "You are Dayang, an ESG assistant for UNIMAS Smart Campus. "
+            "Your name is Dayang. Reply concisely in the same language as the user."
         )
         history_text = "\n".join(
             [f"{msg.role}: {msg.text}" for msg in (request.history or [])[-6:]]
