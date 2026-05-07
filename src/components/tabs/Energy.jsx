@@ -140,12 +140,14 @@ const Energy = ({ data, filters }) => {
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         <KPICard title="Total Energy"    value={fmt(totalKWh)} unit="kWh" subtitle="Filtered selection" color="#3B82F6" icon={Zap} />
-        <KPICard title="Peak Power"      value={fmt(peakKW)}   unit="kW"  subtitle="Highest single reading" color="#F97316" icon={TrendingUp} />
+        <KPICard title="Peak Power"      value={fmt(peakKW)} unit="kW" subtitle="Highest single reading" color="#F97316" icon={TrendingUp}
+          valueColor={peakKW >= 170 ? '#EF4444' : peakKW >= 130 ? '#F59E0B' : undefined} />
         <KPICard title="Solar Generated" value={fmt(solarTotal)} unit="MWh" subtitle="PV generation" color="#FBBF24" icon={Sun} />
         <KPICard title="Avg Battery"     value={avgBattery || '—'} unit="%" subtitle="Storage level" icon={Battery}
           color={avgBattery >= 60 ? '#22C55E' : avgBattery >= 30 ? '#F59E0B' : '#EF4444'}
           valueColor={avgBattery < 60 ? (avgBattery < 30 ? '#EF4444' : '#F59E0B') : undefined} />
-        <KPICard title="CO₂ Estimate"    value={co2Tonnes || '—'} unit="t" subtitle="Scope 2 · 0.585 kgCO₂/kWh" color="#FB923C" icon={Cloud} />
+        <KPICard title="CO₂ Estimate"    value={co2Tonnes || '—'} unit="t" subtitle="Scope 2 · 0.585 kgCO₂/kWh" color="#FB923C" icon={Cloud}
+          valueColor={co2Tonnes != null ? (co2Tonnes < 50 ? undefined : co2Tonnes <= 80 ? '#F59E0B' : '#EF4444') : undefined} />
       </div>
 
       {/* Building energy + Daily power */}
