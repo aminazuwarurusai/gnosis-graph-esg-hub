@@ -760,10 +760,11 @@ function getMockReply(msg){
   return RESPONSES.fallback;
 }
 
+function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function addBotMsg(text){
   const div=document.getElementById('chatMessages');
   const md=text.split('\n').map(line=>{
-    const parts=line.split(/\*\*(.*?)\*\*/g).map((p,j)=>j%2===1?`<strong style="color:#fff">${p}</strong>`:p).join('');
+    const parts=line.split(/\*\*(.*?)\*\*/g).map((p,j)=>j%2===1?`<strong style="color:#fff">${escapeHtml(p)}</strong>`:escapeHtml(p)).join('');
     const isBullet=/^[•\-\*]\s/.test(line);
     return `<span style="display:block${isBullet?';padding-left:10px':''}">${isBullet?'• '+parts.slice(2):parts}</span>`;
   }).join('');
@@ -774,7 +775,8 @@ function addBotMsg(text){
 }
 function addUserMsg(text){
   const div=document.getElementById('chatMessages');
-  div.innerHTML+=`<div style="display:flex;justify-content:flex-end;margin-bottom:12px"><div class="chat-bubble-user">${text}</div></div>`;
+  const safe=escapeHtml(text);
+  div.innerHTML+=`<div style="display:flex;justify-content:flex-end;margin-bottom:12px"><div class="chat-bubble-user">${safe}</div></div>`;
   div.scrollTop=div.scrollHeight;
 }
 function addTyping(){

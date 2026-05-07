@@ -3,10 +3,14 @@ UNIMAS Smart Campus ESG Dashboard — Chat API Router
 Powered by URUS AI SDN BHD
 """
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from pydantic import BaseModel
 from typing import List, Optional
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 import os
+
+limiter = Limiter(key_func=get_remote_address)
 
 router = APIRouter()
 
@@ -170,25 +174,15 @@ def gemini_response(request: ChatRequest) -> Optional[str]:
 
 
 @router.post("/api/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest) -> ChatResponse:
+@limiter.limit("20/minute")
+async def chat(request: Request, body: ChatRequest) -> ChatResponse:
     """
     Chat endpoint — currently returns mock responses.
     Replace mock_response() with Gemini API when API key is available.
     """
 
-    reply = gemini_response(request)
+    reply = gemini_response(body)
     if not reply:
-        reply = mock_response(request.message)
-
-    # ── GEMINI API (uncomment when ready) ─────────────────────────────────
-    # history_formatted = [
-    #     {"role": msg.role, "parts": [msg.text]}
-    #     for msg in (request.history or [])
-    # ]
-    # chat_session = model.start_chat(history=history_formatted)
-    # response = chat_session.send_message(
-    #     f"{SYSTEM_PROMPT}\n\nUser: {request.message}"
-    # )
-    # reply = response.text
+        reply = mock_response(body.message)
 
     return ChatResponse(reply=reply)
