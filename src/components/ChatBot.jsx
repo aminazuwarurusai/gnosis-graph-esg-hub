@@ -500,7 +500,7 @@ const ChatBot = ({ data, filters }) => {
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKey}
-              placeholder="Tanya Dayang tentang ESG, tenaga, kualiti udara..."
+              placeholder="Ask Dayang about ESG, energy, air quality..."
               className="flex-1 bg-transparent text-xs text-white placeholder-gray-600 outline-none"
               disabled={isTyping}
             />
