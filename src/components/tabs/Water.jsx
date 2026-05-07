@@ -59,11 +59,15 @@ const Water = ({ data, filters }) => {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <KPICard title="Avg pH"        value={kpiAvgs.ph   || '—'} subtitle="Ideal: 6.5 – 8.5"   color="#6366F1" icon={FlaskConical}
-          trend={rows.length ? { value: normalPct + '% normal', label: 'readings', up: normalPct >= 60 } : undefined} />
-        <KPICard title="Turbidity"     value={kpiAvgs.turb || '—'} unit="NTU" subtitle="Lower = clearer" color="#06B6D4" icon={Waves} />
-        <KPICard title="Dissolved O₂"  value={kpiAvgs.do_  || '—'} unit="mg/L" subtitle="Target ≥ 6 mg/L" color="#22C55E" icon={Droplets} />
-        <KPICard title="Conductivity"  value={kpiAvgs.cond ? fmt(kpiAvgs.cond, 0) : '—'} unit="µS/cm" subtitle="Avg across locations" color="#8B5CF6" icon={Activity} />
+        <KPICard title="Avg pH"       value={kpiAvgs.ph   || '—'} subtitle="Ideal: 6.5 – 8.5" color="#6366F1" icon={FlaskConical}
+          trend={rows.length ? { value: normalPct + '% normal', label: 'readings', up: normalPct >= 60 } : undefined}
+          valueColor={kpiAvgs.ph != null ? (kpiAvgs.ph >= 6.5 && kpiAvgs.ph <= 8.5 ? undefined : kpiAvgs.ph >= 6.0 && kpiAvgs.ph <= 9.0 ? '#F59E0B' : '#EF4444') : undefined} />
+        <KPICard title="Turbidity"    value={kpiAvgs.turb || '—'} unit="NTU" subtitle="Lower = clearer" color="#06B6D4" icon={Waves}
+          valueColor={kpiAvgs.turb != null ? (kpiAvgs.turb < 5 ? undefined : kpiAvgs.turb <= 25 ? '#F59E0B' : '#EF4444') : undefined} />
+        <KPICard title="Dissolved O₂" value={kpiAvgs.do_  || '—'} unit="mg/L" subtitle="Target ≥ 6 mg/L" color="#22C55E" icon={Droplets}
+          valueColor={kpiAvgs.do_ != null ? (kpiAvgs.do_ >= 6 ? undefined : kpiAvgs.do_ >= 4 ? '#F59E0B' : '#EF4444') : undefined} />
+        <KPICard title="Conductivity" value={kpiAvgs.cond ? fmt(kpiAvgs.cond, 0) : '—'} unit="µS/cm" subtitle="Avg across locations" color="#8B5CF6" icon={Activity}
+          valueColor={kpiAvgs.cond != null ? (kpiAvgs.cond < 500 ? undefined : kpiAvgs.cond <= 1000 ? '#F59E0B' : '#EF4444') : undefined} />
       </div>
 
       {/* Status donut + pH trend */}

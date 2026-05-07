@@ -59,10 +59,13 @@ const Soil = ({ data, filters }) => {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <KPICard title="Avg Moisture" value={avgMoisture || '—'} unit="%" subtitle="Filtered locations" color="#84CC16" icon={Droplets} />
-        <KPICard title="Normal"  value={normalPct} unit="%" subtitle={`${healthCounts.Normal  || 0} readings`} color="#22C55E" icon={Leaf} />
-        <KPICard title="Wet"     value={wetPct}    unit="%" subtitle={`${healthCounts.Wet     || 0} readings`} color="#06B6D4" icon={TreePine} />
-        <KPICard title="Dry"     value={dryPct}    unit="%" subtitle={`${healthCounts.Dry     || 0} readings — at risk`} color="#EF4444" icon={Sun} />
+        <KPICard title="Avg Moisture" value={avgMoisture || '—'} unit="%" subtitle="Filtered locations" color="#84CC16" icon={Droplets}
+          valueColor={avgMoisture != null ? (avgMoisture >= 30 && avgMoisture <= 70 ? undefined : avgMoisture >= 20 && avgMoisture <= 85 ? '#F59E0B' : '#EF4444') : undefined} />
+        <KPICard title="Normal" value={normalPct} unit="%" subtitle={`${healthCounts.Normal || 0} readings`} color="#22C55E" icon={Leaf} />
+        <KPICard title="Wet"    value={wetPct}    unit="%" subtitle={`${healthCounts.Wet    || 0} readings`} color="#06B6D4" icon={TreePine}
+          valueColor={wetPct > 30 ? '#EF4444' : wetPct >= 15 ? '#F59E0B' : undefined} />
+        <KPICard title="Dry"    value={dryPct}    unit="%" subtitle={`${healthCounts.Dry    || 0} readings — at risk`} color="#EF4444" icon={Sun}
+          valueColor={dryPct > 25 ? '#EF4444' : dryPct >= 10 ? '#F59E0B' : undefined} />
       </div>
 
       {/* Moisture trend + health pie */}
