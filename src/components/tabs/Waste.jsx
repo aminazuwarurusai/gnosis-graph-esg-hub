@@ -70,8 +70,10 @@ const Waste = ({ data, filters }) => {
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <KPICard title="Avg Fill Level" value={kpiAvgs.fill || '—'} unit="%" subtitle="Filtered bins" color="#F97316" icon={Trash2} />
-        <KPICard title="Full Bins"      value={statusCounts.Full || 0} subtitle="≥ 90% fill level" color="#EF4444" icon={AlertTriangle} />
-        <KPICard title="Near Full"      value={statusCounts['Near Full'] || 0} subtitle="70–89% fill" color="#F59E0B" icon={Package} />
+        <KPICard title="Full Bins"  value={statusCounts.Full || 0} subtitle="≥ 90% fill level" color="#EF4444" icon={AlertTriangle}
+          valueColor={statusCounts.Full > 0 ? '#EF4444' : undefined} />
+        <KPICard title="Near Full"  value={statusCounts['Near Full'] || 0} subtitle="70–89% fill" color="#F59E0B" icon={Package}
+          valueColor={statusCounts['Near Full'] > 0 ? '#F59E0B' : undefined} />
         <KPICard title="Avg Bin Temp"   value={kpiAvgs.temp || '—'} unit="°C" subtitle="Ambient temperature" color="#06B6D4" icon={Thermometer} />
       </div>
 
