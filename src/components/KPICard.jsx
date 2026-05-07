@@ -10,7 +10,7 @@ import React from 'react'
  * @param {React.ElementType} icon  - Lucide icon component
  * @param {object}  trend       - { value, label, up } optional trend line
  */
-const KPICard = ({ title, value, unit, subtitle, color = '#22C55E', icon: Icon, trend, className = '' }) => (
+const KPICard = ({ title, value, unit, subtitle, color = '#22C55E', icon: Icon, trend, valueColor, className = '' }) => (
   <div className={`bg-[#111827] border border-[#1E293B] rounded-xl p-4 flex flex-col gap-2 ${className}`}>
     <div className="flex items-start justify-between">
       <p className="text-xs text-gray-400 uppercase tracking-wider font-medium leading-tight">{title}</p>
@@ -21,7 +21,7 @@ const KPICard = ({ title, value, unit, subtitle, color = '#22C55E', icon: Icon, 
       )}
     </div>
     <div className="flex items-end gap-1 mt-1">
-      <span className="text-2xl font-bold text-white leading-none">{value}</span>
+      <span className="text-2xl font-bold leading-none" style={{ color: valueColor || '#ffffff' }}>{value}</span>
       {unit && <span className="text-sm text-gray-400 mb-0.5 leading-none">{unit}</span>}
     </div>
     {subtitle && <p className="text-xs text-gray-500 leading-tight">{subtitle}</p>}

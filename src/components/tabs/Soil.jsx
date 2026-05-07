@@ -8,12 +8,13 @@ import { Leaf, Droplets, TreePine, Sun } from 'lucide-react'
 import KPICard from '../KPICard'
 import ChartCard from '../ChartCard'
 import { pivotByDate, countBy, avg, round, toPieData, filterRows } from '../../utils/dataUtils'
+import config from '../../config'
 
 const TT = { backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px', fontSize: '12px', color: '#f8fafc' }
 const AX = { fill: '#6B7280', fontSize: 11 }
 const HEALTH_COLORS = { Normal: '#22C55E', Wet: '#06B6D4', Dry: '#EF4444' }
 const IRRIG_COLORS  = { Active: '#3B82F6', Idle: '#22C55E', Off: '#374151' }
-const LOC_COLORS    = ['#84CC16','#22C55E','#06B6D4','#FBBF24','#8B5CF6']
+const locColor = loc => config.locationColors[loc] || '#84CC16'
 
 const Soil = ({ data, filters }) => {
   const rows = useMemo(() =>
@@ -76,8 +77,8 @@ const Soil = ({ data, filters }) => {
               <ReferenceLine y={70} stroke="#06B6D4" strokeDasharray="3 3" label={{ value:'Wet >70%', fill:'#06B6D4', fontSize:9, position:'insideRight' }} />
               <Tooltip contentStyle={TT} formatter={v => [`${v}%`, 'Moisture']} />
               <Legend wrapperStyle={{ fontSize: 10, color: '#9CA3AF' }} />
-              {locations.map((loc, i) => (
-                <Line key={loc} type="monotone" dataKey={loc} stroke={LOC_COLORS[i % LOC_COLORS.length]} strokeWidth={2} dot={false} />
+              {locations.map(loc => (
+                <Line key={loc} type="monotone" dataKey={loc} stroke={locColor(loc)} strokeWidth={2} dot={false} />
               ))}
             </LineChart>
           </ResponsiveContainer>

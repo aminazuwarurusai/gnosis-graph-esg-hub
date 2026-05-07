@@ -8,12 +8,12 @@ import { Droplets, Activity, Waves, FlaskConical } from 'lucide-react'
 import KPICard from '../KPICard'
 import ChartCard from '../ChartCard'
 import { pivotByDate, aggregateByMonth, countBy, avg, round, fmt, toPieData, filterRows } from '../../utils/dataUtils'
+import config from '../../config'
 
 const TT = { backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px', fontSize: '12px', color: '#f8fafc' }
 const AX = { fill: '#6B7280', fontSize: 11 }
-const STATUS_COLORS  = { Normal: '#22C55E', Warning: '#F59E0B', Critical: '#EF4444' }
-const LOC_COLORS     = { 'Campus Lake': '#6366F1', 'Colleges': '#06B6D4' }
-const LOC_COLORS_ARR = ['#6366F1', '#06B6D4', '#22C55E', '#F59E0B']
+const STATUS_COLORS = { Normal: '#22C55E', Warning: '#F59E0B', Critical: '#EF4444' }
+const locColor = loc => config.locationColors[loc] || '#6B7280'
 
 const Water = ({ data, filters }) => {
   const rows = useMemo(() =>
@@ -119,7 +119,7 @@ const Water = ({ data, filters }) => {
               <Tooltip contentStyle={TT} formatter={(v, n) => [`pH ${v}`, n]} />
               <Legend wrapperStyle={{ fontSize: 10, color: '#9CA3AF' }} />
               {locations.map((loc, i) => (
-                <Line key={loc} type="monotone" dataKey={loc} stroke={LOC_COLORS[loc] || LOC_COLORS_ARR[i]} strokeWidth={2} dot={false} />
+                <Line key={loc} type="monotone" dataKey={loc} stroke={locColor(loc)} strokeWidth={2} dot={false} />
               ))}
             </LineChart>
           </ResponsiveContainer>
@@ -135,7 +135,11 @@ const Water = ({ data, filters }) => {
               <XAxis dataKey="month" tick={AX} axisLine={false} tickLine={false} />
               <YAxis tick={AX} axisLine={false} tickLine={false} />
               <Tooltip contentStyle={TT} formatter={v => [`${v} NTU`, 'Turbidity']} />
-              <Bar dataKey="avg" fill="#06B6D4" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="avg" radius={[4, 4, 0, 0]}>
+                {turbMonth.map((entry, i) => (
+                  <Cell key={i} fill={config.monthColors[entry.month] || '#06B6D4'} />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -165,7 +169,7 @@ const Water = ({ data, filters }) => {
             <Tooltip contentStyle={TT} formatter={(v, n) => [`${v} µS/cm`, n]} />
             <Legend wrapperStyle={{ fontSize: 10, color: '#9CA3AF' }} />
             {locations.map((loc, i) => (
-              <Line key={loc} type="monotone" dataKey={loc} stroke={LOC_COLORS[loc] || LOC_COLORS_ARR[i]} strokeWidth={2} dot={false} />
+              <Line key={loc} type="monotone" dataKey={loc} stroke={locColor(loc)} strokeWidth={2} dot={false} />
             ))}
           </LineChart>
         </ResponsiveContainer>

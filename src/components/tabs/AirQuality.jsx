@@ -8,11 +8,12 @@ import { Wind, Thermometer, AlertCircle } from 'lucide-react'
 import KPICard from '../KPICard'
 import ChartCard from '../ChartCard'
 import { aggregateByMonth, aggregateByLocation, pivotByDate, countBy, avg, round, fmt, toPieData, filterRows } from '../../utils/dataUtils'
+import config from '../../config'
 
 const TT = { backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px', fontSize: '12px', color: '#f8fafc' }
 const AX = { fill: '#6B7280', fontSize: 11 }
 const STATUS_COLORS = { Good: '#22C55E', Moderate: '#F59E0B', Unhealthy: '#EF4444', Poor: '#EF4444' }
-const LOC_COLORS    = ['#06B6D4','#22C55E','#F59E0B','#8B5CF6','#3B82F6']
+const locColor = loc => config.locationColors[loc] || '#6B7280'
 
 const aqiLabel = aqi => aqi <= 50 ? 'Good' : aqi <= 100 ? 'Moderate' : aqi <= 150 ? 'Unhealthy' : 'Hazardous'
 const aqiColor = aqi => aqi <= 50 ? '#22C55E' : aqi <= 100 ? '#F59E0B' : '#EF4444'
@@ -60,7 +61,7 @@ const AirQuality = ({ data, filters }) => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <KPICard title="Avg AQI"    value={kpiAvgs.aqi  || '—'} subtitle={kpiAvgs.aqi ? aqiLabel(kpiAvgs.aqi) : 'No data'} color={aqiColor(kpiAvgs.aqi || 0)} icon={Wind} />
         <KPICard title="Avg PM2.5"  value={kpiAvgs.pm25 || '—'} unit="µg/m³" subtitle="Fine particles"       color="#F59E0B" icon={AlertCircle} />
-        <KPICard title="Avg CO₂"    value={kpiAvgs.co2  || '—'} unit="ppm"   subtitle="Target < 700 ppm"     color="#8B5CF6" icon={Wind} />
+        <KPICard title="Avg CO₂"    value={kpiAvgs.co2  || '—'} unit="ppm"   subtitle="Target < 700 ppm"     color="#FB923C" icon={Wind} />
         <KPICard title="Temp / Humid" value={kpiAvgs.temp ? `${kpiAvgs.temp}°C` : '—'} subtitle={kpiAvgs.humid ? `${kpiAvgs.humid}% RH` : ''} color="#06B6D4" icon={Thermometer} />
       </div>
 
@@ -76,8 +77,8 @@ const AirQuality = ({ data, filters }) => {
               <ReferenceLine y={100} stroke="#F59E0B" strokeDasharray="4 4" label={{ value:'Moderate', fill:'#F59E0B', fontSize:9, position:'insideRight' }} />
               <Tooltip contentStyle={TT} />
               <Legend wrapperStyle={{ fontSize: 10, color: '#9CA3AF' }} />
-              {locations.map((loc, i) => (
-                <Line key={loc} type="monotone" dataKey={loc} stroke={LOC_COLORS[i % LOC_COLORS.length]} strokeWidth={2} dot={false} />
+              {locations.map(loc => (
+                <Line key={loc} type="monotone" dataKey={loc} stroke={locColor(loc)} strokeWidth={2} dot={false} />
               ))}
             </LineChart>
           </ResponsiveContainer>
@@ -135,7 +136,11 @@ const AirQuality = ({ data, filters }) => {
               <XAxis type="number" tick={AX} axisLine={false} tickLine={false} />
               <YAxis type="category" dataKey="location" tick={{ ...AX, fontSize: 10 }} axisLine={false} tickLine={false} />
               <Tooltip contentStyle={TT} formatter={v => [`${v} µg/m³`, 'PM2.5']} />
-              <Bar dataKey="value" fill="#06B6D4" radius={[0, 4, 4, 0]} />
+              <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                {pm25ByLoc.map((entry, i) => (
+                  <Cell key={i} fill={locColor(entry.location)} />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -148,9 +153,9 @@ const AirQuality = ({ data, filters }) => {
               <YAxis tick={AX} axisLine={false} tickLine={false} />
               <ReferenceLine y={700} stroke="#F59E0B" strokeDasharray="4 4" label={{ value:'700 ppm', fill:'#F59E0B', fontSize:10, position:'insideTopRight' }} />
               <Tooltip contentStyle={TT} formatter={v => [`${v} ppm`, 'CO₂']} />
-              <Line type="monotone" dataKey="avg" name="CO₂" stroke="#8B5CF6" strokeWidth={2.5}
-                dot={{ fill: '#8B5CF6', r: 5, strokeWidth: 0 }}
-                label={{ position: 'top', fill: '#8B5CF6', fontSize: 11 }} />
+              <Line type="monotone" dataKey="avg" name="CO₂" stroke="#FB923C" strokeWidth={2.5}
+                dot={{ fill: '#FB923C', r: 5, strokeWidth: 0 }}
+                label={{ position: 'top', fill: '#FB923C', fontSize: 11 }} />
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>

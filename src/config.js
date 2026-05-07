@@ -41,6 +41,21 @@ const config = {
       palette: ['#22C55E', '#06B6D4', '#F59E0B', '#EF4444', '#3B82F6', '#8B5CF6', '#F97316'],
     },
   },
+  // One colour per month — used consistently in bar charts and filter pills
+  monthColors: {
+    Jan: '#60A5FA',  // cool blue  — new year, fresh start
+    Feb: '#C084FC',  // soft violet — mid-quarter, calm
+    Mar: '#2DD4BF',  // teal       — approaching new season
+  },
+  // One colour per campus location — used consistently across ALL tabs and charts
+  locationColors: {
+    'Admin Block':         '#3B82F6',  // blue       — authority, administration
+    'Engineering Faculty': '#06B6D4',  // cyan       — technical, science
+    'Campus Lake':         '#38BDF8',  // sky blue   — water, lake
+    'Main Gate':           '#94A3B8',  // slate      — infrastructure, gate, boundary
+    'Cafeteria':           '#FBBF24',  // golden     — warmth, food, social
+    'Colleges':            '#A78BFA',  // violet     — community, residential, academic
+  },
   csvFiles: {
     energy:    'UNIMAS_Energy_Expanded.csv',
     air:       'UNIMAS_Air_Expanded.csv',

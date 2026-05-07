@@ -9,11 +9,13 @@ import KPICard from '../KPICard'
 import ChartCard from '../ChartCard'
 import StatusBadge from '../StatusBadge'
 import { countBy, toPieData, filterAlerts } from '../../utils/dataUtils'
+import config from '../../config'
 
 const TT = { backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px', fontSize: '12px', color: '#f8fafc' }
 const AX = { fill: '#6B7280', fontSize: 11 }
 const SEV_COLORS    = { Critical: '#EF4444', Warning: '#F59E0B' }
 const STATUS_COLORS = { Resolved: '#22C55E', Assigned: '#F59E0B', 'On Route': '#06B6D4' }
+const TYPE_COLORS   = ['#3B82F6','#818CF8','#06B6D4','#2DD4BF','#A78BFA','#64748B']
 
 const AlertCentre = ({ data, filters }) => {
   const [sevFilter,    setSevFilter]    = useState('All')
@@ -70,10 +72,10 @@ const AlertCentre = ({ data, filters }) => {
   const sevPie    = useMemo(() => toPieData(sevCounts,    SEV_COLORS),    [sevCounts])
   const statusPie = useMemo(() => toPieData(statusCounts, STATUS_COLORS), [statusCounts])
   const typeBar   = useMemo(() =>
-    Object.entries(typeCounts).map(([name, value], i) => ({ name, value, fill: Object.values(SEV_COLORS)[i % 2] }))
+    Object.entries(typeCounts).map(([name, value], i) => ({ name, value, fill: TYPE_COLORS[i % TYPE_COLORS.length] }))
   , [typeCounts])
   const locBar    = useMemo(() =>
-    Object.entries(locCounts).map(([name, value]) => ({ name, value, fill: '#3B82F6' }))
+    Object.entries(locCounts).map(([name, value]) => ({ name, value, fill: config.locationColors[name] || '#6B7280' }))
   , [locCounts])
 
   const FilterBtn = ({ label, active, onClick }) => (
@@ -89,7 +91,9 @@ const AlertCentre = ({ data, filters }) => {
     <div className="space-y-6 animate-[fadeIn_0.4s_ease-out]">
       {/* KPIs — based on global filter */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <KPICard title="Total Alerts" value={globalFiltered.length} subtitle="Filtered selection" color="#EF4444" icon={AlertTriangle} />
+        <KPICard title="Total Alerts" value={globalFiltered.length} subtitle="Filtered selection" icon={AlertTriangle}
+          color={globalFiltered.length === 0 ? '#6B7280' : sevCounts.Critical > 0 ? '#EF4444' : '#F59E0B'}
+          valueColor={globalFiltered.length === 0 ? undefined : sevCounts.Critical > 0 ? '#EF4444' : '#F59E0B'} />
         <KPICard title="Critical"  value={sevCounts.Critical    || 0} subtitle="Immediate action"    color="#EF4444" icon={AlertTriangle} />
         <KPICard title="Warning"   value={sevCounts.Warning     || 0} subtitle="Monitoring required" color="#F59E0B" icon={Clock} />
         <KPICard title="Resolved"  value={statusCounts.Resolved || 0} subtitle={`${globalFiltered.length - (statusCounts.Resolved||0)} still open`} color="#22C55E" icon={CheckCircle} />

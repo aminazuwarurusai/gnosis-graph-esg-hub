@@ -12,7 +12,7 @@ import StatusBadge from '../StatusBadge'
 import CampusMap from '../CampusMap'
 import config from '../../config'
 import {
-  countBy, filterAlerts, filterRows, aggregateByMonth, avg, round, fmt,
+  countBy, filterAlerts, filterRows, aggregateByMonth, avg, round, fmt, statusColor,
 } from '../../utils/dataUtils'
 
 const RADAR_DATA = [
@@ -130,6 +130,18 @@ const Overview = ({ data, filters }) => {
     return round((filteredSoil.filter(r => r.Health_Status === 'Dry').length / filteredSoil.length) * 100, 1)
   }, [filteredSoil])
 
+  const waterDominantStatus = useMemo(() => {
+    if (!filteredWater.length) return null
+    const counts = countBy(filteredWater, 'Status')
+    return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || null
+  }, [filteredWater])
+
+  const soilDominantStatus = useMemo(() => {
+    if (!filteredSoil.length) return null
+    const counts = countBy(filteredSoil, 'Health_Status')
+    return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || null
+  }, [filteredSoil])
+
   // ── Alerts (active = not resolved) ─────────────────────────────────────
   const filteredAlerts = useMemo(() =>
     filterAlerts(data.alerts || [], filters)
@@ -178,6 +190,12 @@ const Overview = ({ data, filters }) => {
   const warningCount  = alertCounts.Warning  || 0
   const totalSeverity = criticalCount + warningCount || 1
 
+  // Returns amber/red for problem states; undefined (white) when normal — exception-based coloring
+  const warnColor = status => {
+    const c = statusColor(status)
+    return c === '#22C55E' ? undefined : c
+  }
+
   const kpis = [
     {
       title: 'Total Energy', value: totalKWh ? fmt(totalKWh) : '—', unit: totalKWh ? 'kWh' : '',
@@ -188,6 +206,7 @@ const Overview = ({ data, filters }) => {
       title: 'Avg AQI', value: avgAQI ?? '—', unit: '',
       subtitle: avgAQI != null ? `${aqiLabel(avgAQI)} — filtered` : 'No air sensors at location',
       color: '#06B6D4', icon: Wind,
+      valueColor: avgAQI != null ? (avgAQI <= 50 ? undefined : avgAQI <= 100 ? '#F59E0B' : '#EF4444') : undefined,
     },
     {
       title: 'Solar Share', value: solarShare ?? '—', unit: solarShare != null ? '%' : '',
@@ -200,11 +219,14 @@ const Overview = ({ data, filters }) => {
       color: '#8B5CF6', icon: Activity,
     },
     {
-      title: 'Water Normal', value: waterNormalPct ?? '—', unit: waterNormalPct != null ? '%' : '',
+      title: 'Water Status',
+      value: waterDominantStatus ?? '—',
+      unit: '',
       subtitle: waterNormalPct != null
-        ? `${round(100 - waterNormalPct, 1)}% warning readings`
+        ? `${waterNormalPct}% normal · ${round(100 - waterNormalPct, 1)}% warning`
         : 'No water sensors at location',
       color: '#6366F1', icon: Droplets,
+      valueColor: waterDominantStatus ? warnColor(waterDominantStatus) : undefined,
     },
     {
       title: 'Avg Fill Lvl', value: avgFillLevel ?? '—', unit: avgFillLevel != null ? '%' : '',
@@ -212,18 +234,23 @@ const Overview = ({ data, filters }) => {
         ? `${fullBins} full · ${nearFullBins} near-full bins`
         : 'No waste sensors at location',
       color: '#F97316', icon: Trash2,
+      valueColor: avgFillLevel != null ? (avgFillLevel < 50 ? undefined : avgFillLevel <= 75 ? '#F59E0B' : '#EF4444') : undefined,
     },
     {
-      title: 'Soil Normal', value: soilNormalPct ?? '—', unit: soilNormalPct != null ? '%' : '',
+      title: 'Soil Status',
+      value: soilDominantStatus ?? '—',
+      unit: '',
       subtitle: soilNormalPct != null
-        ? `${soilWetPct}% wet · ${soilDryPct}% dry`
+        ? `${soilNormalPct}% normal · ${soilWetPct}% wet · ${soilDryPct}% dry`
         : 'No soil sensors at location',
       color: '#84CC16', icon: Leaf,
+      valueColor: soilDominantStatus ? warnColor(soilDominantStatus) : undefined,
     },
     {
       title: 'Active Alerts', value: String(totalAlerts), unit: '',
       subtitle: `${criticalCount} critical · ${warningCount} warning`,
       color: '#EF4444', icon: AlertTriangle,
+      valueColor: totalAlerts === 0 ? undefined : criticalCount > 0 ? '#EF4444' : '#F59E0B',
     },
   ]
 

@@ -8,11 +8,12 @@ import { Zap, Sun, Battery, TrendingUp, Cloud } from 'lucide-react'
 import KPICard from '../KPICard'
 import ChartCard from '../ChartCard'
 import { aggregateByMonth, pivotByDate, avg, round, fmt, filterRows } from '../../utils/dataUtils'
+import config from '../../config'
 
 const TT  = { backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px', fontSize: '12px', color: '#f8fafc' }
 const AX  = { fill: '#6B7280', fontSize: 11 }
 const BUILDINGS = ['Admin Block', 'Engineering Faculty', 'Colleges']
-const B_COLORS  = { 'Admin Block': '#3B82F6', 'Engineering Faculty': '#06B6D4', 'Colleges': '#8B5CF6' }
+const B_COLORS  = config.locationColors
 
 const BatteryGauge = ({ value }) => {
   const pct = Math.min(100, Math.max(0, value))
@@ -141,8 +142,10 @@ const Energy = ({ data, filters }) => {
         <KPICard title="Total Energy"    value={fmt(totalKWh)} unit="kWh" subtitle="Filtered selection" color="#3B82F6" icon={Zap} />
         <KPICard title="Peak Power"      value={fmt(peakKW)}   unit="kW"  subtitle="Highest single reading" color="#F97316" icon={TrendingUp} />
         <KPICard title="Solar Generated" value={fmt(solarTotal)} unit="MWh" subtitle="PV generation" color="#FBBF24" icon={Sun} />
-        <KPICard title="Avg Battery"     value={avgBattery || '—'} unit="%" subtitle="Storage level" color="#22C55E" icon={Battery} />
-        <KPICard title="CO₂ Estimate"    value={co2Tonnes || '—'} unit="t" subtitle="Scope 2 · 0.585 kgCO₂/kWh" color="#94A3B8" icon={Cloud} />
+        <KPICard title="Avg Battery"     value={avgBattery || '—'} unit="%" subtitle="Storage level" icon={Battery}
+          color={avgBattery >= 60 ? '#22C55E' : avgBattery >= 30 ? '#F59E0B' : '#EF4444'}
+          valueColor={avgBattery < 60 ? (avgBattery < 30 ? '#EF4444' : '#F59E0B') : undefined} />
+        <KPICard title="CO₂ Estimate"    value={co2Tonnes || '—'} unit="t" subtitle="Scope 2 · 0.585 kgCO₂/kWh" color="#FB923C" icon={Cloud} />
       </div>
 
       {/* Building energy + Daily power */}

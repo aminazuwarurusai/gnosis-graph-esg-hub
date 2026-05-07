@@ -1,5 +1,6 @@
 import React from 'react'
 import { MapPin, Calendar, X } from 'lucide-react'
+import config from '../config'
 
 const LOCATIONS = [
   'All',
@@ -14,18 +15,25 @@ const LOCATIONS = [
 const MONTHS = ['All', 'Jan', 'Feb', 'Mar']
 const MONTH_LABELS = { All: 'All Months', Jan: 'January', Feb: 'February', Mar: 'March' }
 
-const Pill = ({ label, active, color = 'emerald', onClick }) => {
+const Pill = ({ label, active, color = 'emerald', activeColor, onClick }) => {
   const activeClass = {
     emerald: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40',
     blue:    'bg-blue-500/20 text-blue-400 border-blue-500/40',
   }[color]
 
+  const dynamicStyle = active && activeColor
+    ? { background: `${activeColor}22`, color: activeColor, borderColor: `${activeColor}55` }
+    : {}
+
   return (
     <button
       onClick={onClick}
+      style={dynamicStyle}
       className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap border transition-all duration-150 ${
-        active
+        active && !activeColor
           ? activeClass
+          : active
+          ? ''
           : 'text-gray-400 border-[#1E293B] hover:border-[#374151] hover:text-gray-200 hover:bg-[#1E293B]'
       }`}
     >
@@ -81,6 +89,7 @@ const FilterBar = ({ filters, setFilters }) => {
                 label={m === 'All' ? 'All' : m}
                 active={filters.month === m}
                 color="emerald"
+                activeColor={config.monthColors[m]}
                 onClick={() => set('month', m)}
               />
             ))}

@@ -2,6 +2,7 @@
 import { MapContainer, TileLayer, CircleMarker, Popup, Circle, Tooltip as LeafletTooltip } from 'react-leaflet'
 import { Layers } from 'lucide-react'
 import 'leaflet/dist/leaflet.css'
+import config from '../config'
 
 // â”€â”€â”€ Campus locations (from Location_Master.csv) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const LOCATIONS = [
@@ -254,12 +255,16 @@ const CampusMap = ({ data, filters }) => {
       </MapContainer>
 
       {/* Selected-location badge */}
-      {selectedLoc && (
-        <div className="absolute top-3 left-3 z-[1000] flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border bg-blue-500/20 text-blue-300 border-blue-500/40 shadow-lg backdrop-blur">
-          <span className="w-2 h-2 rounded-full bg-blue-400 flex-shrink-0" />
-          {selectedLoc}
-        </div>
-      )}
+      {selectedLoc && (() => {
+        const clr = config.locationColors[selectedLoc] || '#3B82F6'
+        return (
+          <div className="absolute top-3 left-3 z-[1000] flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border shadow-lg backdrop-blur"
+            style={{ background: `${clr}25`, color: clr, borderColor: `${clr}55` }}>
+            <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: clr }} />
+            {selectedLoc}
+          </div>
+        )
+      })()}
 
       {/* Metric overlay selector */}
       <div className="absolute top-3 right-3 z-[1000] flex items-center gap-1 rounded-lg border border-[#334155] bg-[#1e293b]/90 p-1 shadow-lg backdrop-blur">
