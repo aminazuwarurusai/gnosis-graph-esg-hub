@@ -66,8 +66,14 @@ MOCK_RESPONSES = {
         "Main improvement area: increase Solar share from 24.7% to 30% target."
     ),
     "air": (
-        "Average AQI is 78.0 (Moderate). Acceptable for most people but "
-        "sensitive groups should limit outdoor exposure. March reading: 82.2 — rising trend."
+        "Air quality is mostly safe for the general public, but at a Moderate level that warrants caution.\n\n"
+        "Average AQI: 78.0 (Moderate, 51–100 range). Most people are unaffected, but those with asthma "
+        "or respiratory conditions should limit prolonged outdoor exposure.\n\n"
+        "Monthly trend:\n"
+        "- January: 74.0 (Good)\n"
+        "- February: 77.8 (Moderate)\n"
+        "- March: 82.2 (Moderate — rising)\n\n"
+        "Recommendation: Monitor the March upward trend closely. Engineering Faculty and Cafeteria show the highest readings."
     ),
     "energy": (
         "Total energy Q1 2026: 364,484 kWh\n"
@@ -155,6 +161,12 @@ def gemini_response(request: ChatRequest) -> Optional[str]:
             "You are Dayang, an ESG assistant for UNIMAS Smart Campus. "
             "Your name is Dayang. Reply concisely in the same language as the user."
         )
+        prompt += (
+            "\n\nIMPORTANT: Never start your reply with your name or a greeting like "
+            "'Hello', 'Hi', 'Dayang here', or 'I am Dayang'. "
+            "Always answer the question directly first (e.g. 'Yes, it is safe' or 'No, levels are elevated') "
+            "before providing supporting data or explanation."
+        )
         history_text = "\n".join(
             [f"{msg.role}: {msg.text}" for msg in (request.history or [])[-6:]]
         )
@@ -166,7 +178,7 @@ def gemini_response(request: ChatRequest) -> Optional[str]:
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=full_prompt,
-            config=types.GenerateContentConfig(max_output_tokens=400, temperature=0.7),
+            config=types.GenerateContentConfig(max_output_tokens=800, temperature=0.7),
         )
         return (response.text or "").strip() or None
     except Exception:

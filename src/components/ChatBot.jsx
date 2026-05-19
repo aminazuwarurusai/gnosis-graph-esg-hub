@@ -109,7 +109,7 @@ function buildDashboardContext(data, filters) {
     .map(alert => `${alert.Timestamp} ${alert.Location} ${alert.Incident_Type} (${alert.Severity}, ${alert.Status})`)
   const mapContext = buildMapContext(data)
 
-  return `You are Dayang, an ESG assistant for ${config.university.shortName} ${config.dashboard.title}. Powered by URUS AI SDN BHD. Your name is Dayang.
+  return `You are Dayang, an ESG assistant for ${config.university.shortName} ${config.dashboard.title}. Powered by URUS AI SDN BHD. Your name is Dayang. Never start your reply with your name or a greeting like "Hello", "Hi", "Dayang here", or "I am Dayang" — go straight to answering the question. Always answer the question directly first (e.g. "Yes, it is safe" or "No, it is not") before providing supporting data or explanation.
 
 Use ONLY the current dashboard data summary below. If data is missing for the selected filter, say that the current dashboard selection has no data for that metric.
 Current dashboard filters: ${activeFilters}
@@ -179,9 +179,9 @@ This is calculated from:
 
 Main area to improve: increase Solar share from 24.7% to 30% target.`,
 
-  air: `Current average AQI is 78.0 - Moderate (51-100 range).
+  air: `Air quality is **mostly safe** for the general public, but at a Moderate level that warrants caution.
 
-This means air is acceptable but sensitive groups should limit prolonged outdoor exposure.
+Average AQI: 78.0 (Moderate, 51–100 range) — acceptable for most people, but sensitive groups such as those with asthma or respiratory conditions should limit prolonged outdoor exposure.
 
 Monthly trend:
 - January: 74.0 (Good to Moderate)
