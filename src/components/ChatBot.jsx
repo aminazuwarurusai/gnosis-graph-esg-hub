@@ -1,7 +1,7 @@
 ﻿import React, { useState, useRef, useEffect } from 'react'
 import { MessageCircle, X, Send, Bot } from 'lucide-react'
 import config from '../config'
-import { avg, countBy, filterAlerts, filterRows, fmt, round } from '../utils/dataUtils'
+import { avg, countBy, filterAlerts, filterRows, fmt, groupBy, round, aggregateByMonth } from '../utils/dataUtils'
 
 const CHAT_API_URL = import.meta.env.VITE_CHAT_API_URL || '/api/chat'
 
@@ -81,35 +81,99 @@ function buildMapContext(data) {
 function buildDashboardContext(data, filters) {
   const scoring = config.esgScoring || {}
   const activeFilters = `location=${filters?.location || 'All'}, month=${filters?.month || 'All'}`
-  const energyRows = filterRows(data?.energy || [], filters, 'Building', 'Date')
-  const airRows = filterRows(data?.air || [], filters, 'Location', 'Date')
-  const waterRows = filterRows(data?.water || [], filters, 'Location', 'Date')
-  const wasteRows = filterRows(data?.waste || [], filters, 'Location', 'Date')
-  const soilRows = filterRows(data?.soil || [], filters, 'Location', 'Date')
-  const gridRows = filterRows(data?.smartGrid || [], filters, null, 'Date')
-  const alertRows = filterAlerts(data?.alerts || [], filters)
 
-  const totalKWh = Math.round(energyRows.reduce((sum, row) => sum + (Number(row.Energy_kWh) || 0), 0))
-  const topEnergy = topBy(energyRows, 'Building', 'Energy_kWh')
-  const aqiValues = airRows.map(row => row.AQI).filter(value => value != null && !isNaN(value))
-  const avgAQI = aqiValues.length ? round(avg(aqiValues), 1) : null
-  const topAQI = topBy(airRows, 'Location', 'AQI', 'avg')
-  const solar = gridRows.reduce((sum, row) => sum + (Number(row.Solar_PV_MWh) || 0), 0)
-  const grid = gridRows.reduce((sum, row) => sum + (Number(row.Grid_Intake_MWh) || 0), 0)
-  const solarShare = solar + grid > 0 ? round((solar / (solar + grid)) * 100, 1) : null
-  const gridEffValues = gridRows.map(row => row.Efficiency_Rate).filter(value => value != null && !isNaN(value))
-  const gridEff = gridEffValues.length ? round(avg(gridEffValues) * 100, 1) : null
-  const waterStatus = countBy(waterRows, 'Status')
-  const wasteStatus = countBy(wasteRows, 'Status')
-  const soilHealth = countBy(soilRows, 'Health_Status')
-  const activeAlerts = alertRows.filter(alert => alert.Status !== 'Resolved')
+  // ── Filtered rows ─────────────────────────────────────────────────────────
+  const energyRows = filterRows(data?.energy    || [], filters, 'Building', 'Date')
+  const airRows    = filterRows(data?.air        || [], filters, 'Location', 'Date')
+  const waterRows  = filterRows(data?.water      || [], filters, 'Location', 'Date')
+  const wasteRows  = filterRows(data?.waste      || [], filters, 'Location', 'Date')
+  const soilRows   = filterRows(data?.soil       || [], filters, 'Location', 'Date')
+  const gridRows   = filterRows(data?.smartGrid  || [], filters, null,       'Date')
+  const alertRows  = filterAlerts(data?.alerts   || [], filters)
+
+  // Helper: extract numeric column values
+  const nums = (rows, col) => rows.map(r => Number(r[col])).filter(v => !isNaN(v) && v !== null)
+
+  // Per-location aggregation helper
+  const byLocAvg = (rows, locKey, col, dp = 1) =>
+    Object.entries(groupBy(rows, locKey))
+      .map(([loc, rs]) => `${loc}: ${round(avg(nums(rs, col)), dp)}`)
+      .join(', ')
+
+  // ── Energy ────────────────────────────────────────────────────────────────
+  const totalKWh    = Math.round(energyRows.reduce((s, r) => s + (Number(r.Energy_kWh) || 0), 0))
+  const avgPowerKW  = round(avg(nums(energyRows, 'Power_kW')), 1)
+  const kwhByBldg   = Object.entries(groupBy(energyRows, 'Building'))
+    .map(([b, rs]) => `${b}: ${fmt(Math.round(rs.reduce((s, r) => s + (Number(r.Energy_kWh) || 0), 0)))} kWh`)
+    .join(' | ')
+
+  // ── Smart Grid ───────────────────────────────────────────────────────────
+  const solar      = gridRows.reduce((s, r) => s + (Number(r.Solar_PV_MWh) || 0), 0)
+  const gridImport = gridRows.reduce((s, r) => s + (Number(r.Grid_Intake_MWh) || 0), 0)
+  const solarShare = solar + gridImport > 0 ? round((solar / (solar + gridImport)) * 100, 1) : null
+  const gridEff    = nums(gridRows, 'Efficiency_Rate').length
+    ? round(avg(nums(gridRows, 'Efficiency_Rate')) * 100, 1) : null
+
+  // ── Monthly helpers ───────────────────────────────────────────────────────
+  const monthlyAvg = (rows, dateKey, col, dp = 1) => {
+    const MON = { 1: 'Jan', 2: 'Feb', 3: 'Mar' }
+    const byMonth = groupBy(rows, r => {
+      const m = String(r[dateKey] || '').split('-')[1]
+      return m ? parseInt(m, 10) : null
+    })
+    return [1, 2, 3].map(m => {
+      const rs = byMonth[m] || []
+      const vals = nums(rs, col)
+      return vals.length ? `${MON[m]}: ${round(avg(vals), dp)}` : null
+    }).filter(Boolean).join(', ')
+  }
+
+  // ── Air Quality ───────────────────────────────────────────────────────────
+  const avgAQI   = airRows.length ? round(avg(nums(airRows, 'AQI')),      1) : null
+  const avgPM25  = airRows.length ? round(avg(nums(airRows, 'PM2.5')),    1) : null
+  const avgCO2   = airRows.length ? round(avg(nums(airRows, 'CO2')),      0) : null
+  const avgTemp  = airRows.length ? round(avg(nums(airRows, 'Temp')),     1) : null
+  const avgHumid = airRows.length ? round(avg(nums(airRows, 'Humidity')), 1) : null
+  const airStatus = countBy(airRows, 'Status')
+  const aqiByLoc  = Object.entries(groupBy(airRows, 'Location'))
+    .map(([loc, rs]) =>
+      `${loc} — AQI ${round(avg(nums(rs, 'AQI')), 1)}, PM2.5 ${round(avg(nums(rs, 'PM2.5')), 1)} µg/m³, CO2 ${round(avg(nums(rs, 'CO2')), 0)} ppm, Temp ${round(avg(nums(rs, 'Temp')), 1)}°C, Humidity ${round(avg(nums(rs, 'Humidity')), 1)}%`)
+    .join(' | ')
+
+  // ── Water ─────────────────────────────────────────────────────────────────
+  const waterStatus  = countBy(waterRows, 'Status')
+  const waterAvgPH   = waterRows.length ? round(avg(nums(waterRows, 'pH')),          2) : null
+  const waterAvgCond = waterRows.length ? round(avg(nums(waterRows, 'Conductivity')), 0) : null
+  const waterAvgTurb = waterRows.length ? round(avg(nums(waterRows, 'Turbidity')),   2) : null
+  const waterAvgDO   = waterRows.length ? round(avg(nums(waterRows, 'DO')),          2) : null
+  const waterByLoc   = Object.entries(groupBy(waterRows, 'Location'))
+    .map(([loc, rs]) =>
+      `${loc} — pH ${round(avg(nums(rs, 'pH')), 2)}, Conductivity ${round(avg(nums(rs, 'Conductivity')), 0)} µS/cm, Turbidity ${round(avg(nums(rs, 'Turbidity')), 2)} NTU, DO ${round(avg(nums(rs, 'DO')), 2)} mg/L`)
+    .join(' | ')
+
+  // ── Waste ─────────────────────────────────────────────────────────────────
+  const wasteStatus  = countBy(wasteRows, 'Status')
+  const avgFill      = wasteRows.length ? round(avg(nums(wasteRows, 'Fill_Level')), 1) : null
+  const avgWeight    = wasteRows.length ? round(avg(nums(wasteRows, 'Weight')),     1) : null
+  const avgBinTemp   = wasteRows.length ? round(avg(nums(wasteRows, 'Temp')),       1) : null
+  const fillByLoc    = byLocAvg(wasteRows, 'Location', 'Fill_Level')
+
+  // ── Soil ──────────────────────────────────────────────────────────────────
+  const soilHealth   = countBy(soilRows, 'Health_Status')
+  const irrigStatus  = countBy(soilRows, 'Irrigation_Status')
+  const avgMoisture  = soilRows.length ? round(avg(nums(soilRows, 'Moisture_Percentage')), 1) : null
+  const moistByLoc   = byLocAvg(soilRows, 'Location', 'Moisture_Percentage')
+
+  // ── Alerts ────────────────────────────────────────────────────────────────
+  const activeAlerts   = alertRows.filter(r => r.Status !== 'Resolved')
   const activeSeverity = countBy(activeAlerts, 'Severity')
-  const latestAlerts = [...alertRows]
-    .slice(-5)
-    .map(alert => `${alert.Timestamp} ${alert.Location} ${alert.Incident_Type} (${alert.Severity}, ${alert.Status})`)
+  const allActiveList  = activeAlerts
+    .map(r => `${r.Incident_Type} at ${r.Location} (${r.Severity}, ${r.Status})`)
+    .join(' | ') || 'none'
+
   const mapContext = buildMapContext(data)
 
-  return `You are Dayang, an ESG assistant for ${config.university.shortName} ${config.dashboard.title}. Powered by URUS AI SDN BHD. Your name is Dayang. Never start your reply with your name or a greeting like "Hello", "Hi", "Dayang here", or "I am Dayang" — go straight to answering the question. Always answer the question directly first (e.g. "Yes, it is safe" or "No, it is not") before providing supporting data or explanation.
+  return `You are Dayang, a professional ESG assistant for ${config.university.shortName} ${config.dashboard.title}. Powered by URUS AI SDN BHD. Your name is Dayang. Understand English, Bahasa Malaysia, and Sarawak Malay dialect. When the user writes in Sarawak dialect, respond naturally in light Sarawak Malay while staying clear, respectful, and suitable for stakeholder demos. Do not overuse slang. Never start your reply with your name or a greeting like "Hello", "Hi", "Dayang here", or "I am Dayang" — go straight to answering the question. Always answer the question directly first (e.g. "Yes, it is safe" or "No, it is not") before providing supporting data or explanation.
 
 Use ONLY the current dashboard data summary below. If data is missing for the selected filter, say that the current dashboard selection has no data for that metric.
 Current dashboard filters: ${activeFilters}
@@ -123,20 +187,51 @@ Water formula: ${formulaText(scoring.water?.formula)}. Basis: ${(scoring.water?.
 Waste formula: ${formulaText(scoring.waste?.formula)}. Basis: ${(scoring.waste?.methodology || []).join('; ')}. ${scoring.waste?.explanation || ''}
 Soil formula: ${formulaText(scoring.soil?.formula)}. Basis: ${(scoring.soil?.methodology || []).join('; ')}. ${scoring.soil?.explanation || ''}
 
-Current filtered data summary:
-- Energy rows: ${energyRows.length}; total energy ${fmt(totalKWh)} kWh; top building ${topEnergy ? `${topEnergy.name} (${fmt(Math.round(topEnergy.value))} kWh)` : 'no data'}.
-- Smart grid rows: ${gridRows.length}; solar share ${solarShare ?? 'no data'}%; solar generated ${fmt(Math.round(solar))} MWh; grid efficiency ${gridEff ?? 'no data'}%.
-- Air rows: ${airRows.length}; average AQI ${avgAQI ?? 'no data'}; highest average AQI location ${topAQI ? `${topAQI.name} (${round(topAQI.value, 1)})` : 'no data'}.
-- Water rows: ${waterRows.length}; Normal ${waterStatus.Normal || 0} (${pctOf(waterStatus.Normal || 0, waterRows.length)}%); Warning ${waterStatus.Warning || 0}; Critical ${waterStatus.Critical || 0}.
-- Waste rows: ${wasteRows.length}; average fill ${wasteRows.length ? round(avg(wasteRows.map(row => row.Fill_Level).filter(value => value != null && !isNaN(value))), 1) : 'no data'}%; OK ${wasteStatus.OK || 0}; Near Full ${wasteStatus['Near Full'] || 0}; Full ${wasteStatus.Full || 0}.
-- Soil rows: ${soilRows.length}; Normal ${soilHealth.Normal || 0} (${pctOf(soilHealth.Normal || 0, soilRows.length)}%); Wet ${soilHealth.Wet || 0}; Dry ${soilHealth.Dry || 0}.
-- Alerts rows: ${alertRows.length}; active unresolved ${activeAlerts.length}; critical active ${activeSeverity.Critical || 0}; warning active ${activeSeverity.Warning || 0}.
-- Latest/filtered alerts: ${latestAlerts.length ? latestAlerts.join(' | ') : 'no alerts in current selection'}.
+=== ENERGY (${energyRows.length} rows) ===
+Total: ${fmt(totalKWh)} kWh | Avg power: ${avgPowerKW ?? 'no data'} kW
+Per building: ${kwhByBldg || 'no data'}
 
-Current campus map marker data, using the latest CSV reading per location:
-${mapContext || 'No campus map marker data available.'}
+=== SMART GRID (${gridRows.length} rows) ===
+Solar: ${fmt(Math.round(solar))} MWh (${solarShare ?? 'no data'}% of total) | Grid import: ${fmt(Math.round(gridImport))} MWh | Grid efficiency: ${gridEff ?? 'no data'}%
 
-Rules: Answer concisely, max 120 words. Reply in the same language as the user. Do not invent data outside this summary.`
+=== AIR QUALITY (${airRows.length} rows) ===
+Campus avg — AQI: ${avgAQI ?? 'no data'} | PM2.5: ${avgPM25 ?? 'no data'} µg/m³ | CO2: ${avgCO2 ?? 'no data'} ppm | Temp: ${avgTemp ?? 'no data'}°C | Humidity: ${avgHumid ?? 'no data'}%
+Status breakdown: Good ${airStatus.Good || 0} | Moderate ${airStatus.Moderate || 0} | Unhealthy ${airStatus.Unhealthy || 0}
+Monthly AQI trend: ${monthlyAvg(airRows, 'Date', 'AQI')}
+Monthly PM2.5 trend: ${monthlyAvg(airRows, 'Date', 'PM2.5')}
+Monthly CO2 trend: ${monthlyAvg(airRows, 'Date', 'CO2', 0)} ppm
+Per location: ${aqiByLoc || 'no data'}
+
+=== WATER QUALITY (${waterRows.length} rows) ===
+Campus avg — pH: ${waterAvgPH ?? 'no data'} | Conductivity: ${waterAvgCond ?? 'no data'} µS/cm | Turbidity: ${waterAvgTurb ?? 'no data'} NTU | DO: ${waterAvgDO ?? 'no data'} mg/L
+Status: Normal ${waterStatus.Normal || 0} (${pctOf(waterStatus.Normal || 0, waterRows.length)}%) | Warning ${waterStatus.Warning || 0} | Critical ${waterStatus.Critical || 0}
+Monthly pH trend: ${monthlyAvg(waterRows, 'Date', 'pH', 2)}
+Monthly Conductivity trend: ${monthlyAvg(waterRows, 'Date', 'Conductivity', 0)} µS/cm
+Monthly Turbidity trend: ${monthlyAvg(waterRows, 'Date', 'Turbidity', 2)} NTU
+Monthly DO trend: ${monthlyAvg(waterRows, 'Date', 'DO', 2)} mg/L
+Per location: ${waterByLoc || 'no data'}
+
+=== WASTE MANAGEMENT (${wasteRows.length} rows) ===
+Campus avg — Fill: ${avgFill ?? 'no data'}% | Weight: ${avgWeight ?? 'no data'} kg | Bin temp: ${avgBinTemp ?? 'no data'}°C
+Status: OK ${wasteStatus.OK || 0} | Near Full ${wasteStatus['Near Full'] || 0} | Full ${wasteStatus.Full || 0}
+Monthly fill trend: ${monthlyAvg(wasteRows, 'Date', 'Fill_Level')}%
+Fill by location: ${fillByLoc || 'no data'}
+
+=== SOIL HEALTH (${soilRows.length} rows) ===
+Avg moisture: ${avgMoisture ?? 'no data'}%
+Health status: Normal ${soilHealth.Normal || 0} | Wet ${soilHealth.Wet || 0} | Dry ${soilHealth.Dry || 0}
+Irrigation: Active ${irrigStatus.Active || 0} | Idle ${irrigStatus.Idle || 0} | Off ${irrigStatus.Off || 0}
+Monthly moisture trend: ${monthlyAvg(soilRows, 'Date', 'Moisture_Percentage')}%
+Moisture by location: ${moistByLoc || 'no data'}
+
+=== ALERTS (${alertRows.length} total) ===
+Active: ${activeAlerts.length} (Critical: ${activeSeverity.Critical || 0}, Warning: ${activeSeverity.Warning || 0}) | Resolved: ${alertRows.length - activeAlerts.length}
+All active alerts: ${allActiveList}
+
+=== CAMPUS MAP (latest reading per location) ===
+${mapContext || 'No map data available.'}
+
+Rules: Answer concisely, max 150 words. Reply in the same language as the user. Do not invent data outside this summary.`
 }
 async function callBackendChat(userMsg, chatHistory, dashboardContext) {
   const history = chatHistory.slice(-6).map(msg => ({
@@ -304,7 +399,7 @@ function getMockResponse(msg) {
     return RESPONSES.energy
   if (m.includes('alert') || m.includes('amaran') || m.includes('critical') || m.includes('warning') || m.includes('incident') || m.includes('bahaya'))
     return RESPONSES.alert
-  if (m.includes('water') || m.includes('ph') || m.includes('lake') || m.includes('tasik') || m.includes('dissolved') || m.includes('turbid'))
+  if (m.includes('water') || m.includes('ph') || m.includes('lake') || m.includes('tasik') || m.includes('dissolved') || m.includes('turbid') || m.includes('conductivity') || m.includes('konduktiviti') || m.includes('do ') || m.includes('kualiti air'))
     return RESPONSES.water
   if (m.includes('waste') || m.includes('sisa') || m.includes('bin') || m.includes('sampah') || m.includes('fill') || m.includes('cafeteria') || m.includes('tong'))
     return RESPONSES.waste
@@ -384,6 +479,12 @@ const ChatBot = ({ data, filters }) => {
   const messagesEndRef = useRef(null)
   const inputRef       = useRef(null)
 
+  // Recompute only when data or filters change, not on every message send
+  const dashboardContext = useMemo(
+    () => buildDashboardContext(data, filters),
+    [data, filters]
+  )
+
   // Auto-scroll on new messages or typing indicator
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -413,7 +514,7 @@ const ChatBot = ({ data, filters }) => {
 
     let reply
     try {
-      reply = await callBackendChat(trimmed, messages, buildDashboardContext(data, filters))
+      reply = await callBackendChat(trimmed, messages, dashboardContext)
     } catch (err) {
       console.error('[Chat API error]', err?.message || err)
       reply = `I'm having trouble reaching the chat service right now.\n\nLocal response:\n${getMockResponse(trimmed)}`
@@ -545,6 +646,5 @@ const ChatBot = ({ data, filters }) => {
 }
 
 export default ChatBot
-
 
 
