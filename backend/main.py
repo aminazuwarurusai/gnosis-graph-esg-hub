@@ -3,8 +3,13 @@ Minimal FastAPI app entrypoint for dashboard chat backend.
 Run with: uvicorn backend.main:app --reload --port 8000
 """
 
+from pathlib import Path
+
 from dotenv import load_dotenv
-load_dotenv()
+
+BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR.parent / ".env")
+load_dotenv(BASE_DIR / ".env")
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,7 +17,7 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
-from backend.routers.chat import router as chat_router
+from routers.chat import router as chat_router
 
 limiter = Limiter(key_func=get_remote_address)
 
@@ -31,6 +36,7 @@ ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
     "https://esg.myurus",
     "https://www.esg.myurus",
+    "https://gnosis-graph-esg-hub.vercel.app",
 ]
 
 app.add_middleware(
