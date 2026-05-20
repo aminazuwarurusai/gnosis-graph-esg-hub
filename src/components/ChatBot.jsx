@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from 'react'
+﻿import React, { useState, useRef, useEffect, useMemo } from 'react'
 import { MessageCircle, X, Send, Bot } from 'lucide-react'
 import config from '../config'
 import { avg, countBy, filterAlerts, filterRows, fmt, groupBy, round, aggregateByMonth } from '../utils/dataUtils'
