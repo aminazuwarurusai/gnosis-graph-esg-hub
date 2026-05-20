@@ -181,7 +181,7 @@ Dashboard period: ${config.dashboard.period}
 ESG scores: composite ${config.esgScore.composite}/100, energy ${config.esgScore.energy}, air ${config.esgScore.air}, water ${config.esgScore.water}, waste ${config.esgScore.waste}, soil ${config.esgScore.soil}.
 ESG scoring note: ${scoring.note || 'Scoring methodology is configured separately from raw dashboard data.'}
 Composite formula: ${formulaText(scoring.composite?.formula)}. ${scoring.composite?.explanation || ''}
-Energy formula: ${formulaText(scoring.energy?.formula)}. Basis: ${(scoring.energy?.methodology || []).join('; ')}. ${scoring.energy?.explanation || ''}
+Energy formula: ${formulaText(scoring.energy?.formula)}. Basis: ${(scoring.energy?.methodology || []).join('; ')}. ${scoring.energy?.explanation || ''} Calculation breakdown: ${scoring.energy?.calculationNote || ''}
 Air formula: ${formulaText(scoring.air?.formula)}. Basis: ${(scoring.air?.methodology || []).join('; ')}. ${scoring.air?.explanation || ''}
 Water formula: ${formulaText(scoring.water?.formula)}. Basis: ${(scoring.water?.methodology || []).join('; ')}. ${scoring.water?.explanation || ''}
 Waste formula: ${formulaText(scoring.waste?.formula)}. Basis: ${(scoring.waste?.methodology || []).join('; ')}. ${scoring.waste?.explanation || ''}

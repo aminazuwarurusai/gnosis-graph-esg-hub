@@ -101,6 +101,7 @@ const config = {
         'Estimated Scope 2 carbon emissions',
       ],
       explanation: 'Energy score is driven by high grid efficiency and renewable contribution, with deductions when solar share is below target or consumption remains high.',
+      calculationNote: 'Grid efficiency 96.4% ≈ 34/35pts (35% weight). Solar share 24.7% vs 30% target = 82.3% achievement ≈ 25/30pts (30% weight). Building consumption 364,484 kWh across 3 buildings ≈ 15/20pts (20% weight). Estimated emissions 213 tonnes CO2 ≈ 11/15pts (15% weight). Total ≈ 85/100 adjusted to 78 after penalty for solar gap.',
     },
     air: {
       formula: [
