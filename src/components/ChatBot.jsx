@@ -205,11 +205,10 @@ Per location: ${aqiByLoc || 'no data'}
 === WATER QUALITY (${waterRows.length} rows) ===
 Campus avg — pH: ${waterAvgPH ?? 'no data'} | Conductivity: ${waterAvgCond ?? 'no data'} µS/cm | Turbidity: ${waterAvgTurb ?? 'no data'} NTU | DO: ${waterAvgDO ?? 'no data'} mg/L
 Status: Normal ${waterStatus.Normal || 0} (${pctOf(waterStatus.Normal || 0, waterRows.length)}%) | Warning ${waterStatus.Warning || 0} | Critical ${waterStatus.Critical || 0}
-Monthly pH trend: ${monthlyAvg(waterRows, 'Date', 'pH', 2)}
-Monthly Conductivity trend: ${monthlyAvg(waterRows, 'Date', 'Conductivity', 0)} µS/cm
-Monthly Turbidity trend: ${monthlyAvg(waterRows, 'Date', 'Turbidity', 2)} NTU
-Monthly DO trend: ${monthlyAvg(waterRows, 'Date', 'DO', 2)} mg/L
-Per location: ${waterByLoc || 'no data'}
+Monthly trends & per-location breakdown:
+${Object.entries(groupBy(waterRows, 'Location')).map(([loc, rs]) =>
+  `${loc} — pH: ${monthlyAvg(rs, 'Date', 'pH', 2)} | Conductivity: ${monthlyAvg(rs, 'Date', 'Conductivity', 0)} µS/cm | Turbidity: ${monthlyAvg(rs, 'Date', 'Turbidity', 2)} NTU | DO: ${monthlyAvg(rs, 'Date', 'DO', 2)} mg/L`
+).join('\n') || 'no data'}
 
 === WASTE MANAGEMENT (${wasteRows.length} rows) ===
 Campus avg — Fill: ${avgFill ?? 'no data'}% | Weight: ${avgWeight ?? 'no data'} kg | Bin temp: ${avgBinTemp ?? 'no data'}°C
